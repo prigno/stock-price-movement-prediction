@@ -66,23 +66,6 @@ def process_data(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def get_features_and_targets(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Split data into features and targets.
-
-    Args:
-        data (pd.DataFrame): processed stock data.
-
-    Returns:
-        tuple[pd.DataFrame, pd.DataFrame]: input features and target values.
-
-    """
-    X = data[FEATURE_COLUMNS]
-    y = data[TARGET_COLUMNS]
-
-    return X, y
-
-
 def process_and_save_ticker(ticker: str) -> None:
     """
     Process and save data of a ticker.
