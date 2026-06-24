@@ -72,10 +72,6 @@ def process_and_save_ticker(ticker: str) -> None:
 
     Args:
         ticker (str): stock ticker symbol.
-
-    Returns:
-        None
-
     """
     project_root = Path(__file__).resolve().parents[2]
 
@@ -91,10 +87,6 @@ def process_and_save_ticker(ticker: str) -> None:
 def process_and_save_all_data() -> None:
     """
     Process and save data of all tickers.
-
-    Returns:
-        None
-
     """
     for ticker in TICKERS:
         process_and_save_ticker(ticker)
