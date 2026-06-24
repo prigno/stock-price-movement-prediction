@@ -41,9 +41,6 @@ def _save_ticker_data(ticker, data):
     Args:
         ticker (str): stock ticker symbol.
         data (pd.DataFrame): stock data to save.
-    
-    Returns:
-        None
     """
     project_root = Path(__file__).resolve().parents[2]
     output_dir = project_root / "data" / "raw"
@@ -61,9 +58,6 @@ def _save_ticker_data(ticker, data):
 def _load_and_save_all_data():
     """
     Download and save all historical data for all selected tickers.
-
-    Returns:
-        None
     """
     for ticker in TICKERS:
         print(f"Loading data for {ticker}...")
