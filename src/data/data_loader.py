@@ -8,7 +8,7 @@ TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ"
 
 # period considered (10 years)
 START_DATE = "2016-06-01"
-END_DATE = "2026-06-01"  # non included in the period
+END_DATE = "2026-06-01" # not included in the period
 
 
 def _load_ticker_data(ticker):
