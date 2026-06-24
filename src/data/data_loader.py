@@ -62,9 +62,6 @@ def _load_and_save_all_data():
     """
     Download and save all historical data for all selected tickers.
 
-    Args:
-        None
-
     Returns:
         None
     """
