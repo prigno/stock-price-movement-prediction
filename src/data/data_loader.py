@@ -7,24 +7,26 @@ import yfinance as yf
 # tickers available
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
 
-# period considered (10 years)
-START_DATE = "2006-06-01"
-END_DATE = "2026-06-01" # not included in the period
+# period considered
+START_DATE = "2000-01-01"
+END_DATE = "2026-06-01"
 
 
-def _load_data(ticker):
+def _load_data(ticker, start_date=START_DATE, end_date=END_DATE):
     """
     Download historical stock data of a ticker.
 
     Args:
         ticker (str): stock ticker symbol.
+        start_date (str): first day of the period (included)
+        end_date (str): last day of the periodo (excluded)
     
     Returns:
         pd.DataFrame: historical stock data with six columns: Date, Open, High, Low, Close and Volume.
 
     """
     # download historical data:
-    data = yf.download(ticker, start=START_DATE, end=END_DATE, progress=False)
+    data = yf.download(ticker, start=start_date, end=end_date, progress=False)
 
     # columns are: (Close, <ticker name>), (High, <ticker name>), (Low, <ticker name>), (Open, <ticker name>), (Volume, <ticker name>)
     # data of each ticker is saved on a different file, so the <ticker_name> isn't needed
@@ -56,6 +58,20 @@ def _save_data(ticker, data):
     print(f"Data for {ticker} saved to {output_path}")
 
 
+def load_and_save_ticker(ticker, start_date=START_DATE, end_date=END_DATE):
+    """
+    Download and save stock data of a ticker.
+
+    Args:
+        ticker (str): stock ticker symbol.
+        start_date (str): first date included in the period.
+        end_date (str): last date not included in the period.
+    """
+    print(f"Loading data for {ticker}...")
+    data = _load_data(ticker, start_date=start_date, end_date=end_date)
+    _save_data(ticker, data)
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: <ticker> required as argument")
@@ -69,12 +85,9 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if ticker != "ALL_TICKERS":
-        print(f"Loading data for {ticker}...")
-        data = _load_data(ticker)
-        _save_data(ticker, data)
+        load_and_save_ticker(ticker)
     else:
         for ticker in TICKERS:
-            print(f"Loading data for {ticker}...")
-            data = _load_data(ticker)
-            _save_data(ticker, data)
+            load_and_save_ticker(ticker)
+            
 

@@ -93,12 +93,15 @@ def _save_report(ticker: str, metrics: pd.DataFrame) -> None:
     metrics.to_csv(report_path, index=False)
 
 
-def _train_and_evaluate_model(ticker: str) -> None:
+def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     """
     Train and evaluate the Ridge Regression model for a ticker.
 
     Args:
         ticker (str): stock ticker symbol.
+
+    Returns:
+        pd.DataFrame: evaluation metrics.
     """
     data = _load_processed_data(ticker)
 
@@ -125,10 +128,12 @@ def _train_and_evaluate_model(ticker: str) -> None:
     metrics = pd.DataFrame({"target": TARGET_COLUMNS, "mae": mae, "rmse": rmse, "r2": r2})
 
     #_save_model(ticker, model, scaler)
-    _save_report(ticker, metrics)
+    #_save_report(ticker, metrics)
 
     print(f"Ticker: {ticker}")
     print(metrics)
+
+    return metrics
 
 
 if __name__ == "__main__":
@@ -142,10 +147,10 @@ if __name__ == "__main__":
         print(f"Invalid ticker: {ticker}")
         print(f"Available tickers: {TICKERS}")
         sys.exit(1)
-        
+
     if ticker != "ALL_TICKERS":
-        _train_and_evaluate_model(ticker)
+        train_and_evaluate_model(ticker)
     else:
         for t in TICKERS:
-            _train_and_evaluate_model(t)
+            train_and_evaluate_model(t)
 

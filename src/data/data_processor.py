@@ -75,7 +75,7 @@ def _process_data(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def _process_and_save_ticker(ticker: str) -> None:
+def process_and_save_ticker(ticker: str) -> None:
     """
     Process and save data of a ticker.
 
@@ -92,6 +92,7 @@ def _process_and_save_ticker(ticker: str) -> None:
     processed_data_path.parent.mkdir(parents=True, exist_ok=True)
 
     processed_data.to_csv(processed_data_path, index=False)
+    print(f"Processed data for {ticker} saved to {processed_data_path}")
 
 
 if __name__ == "__main__":
@@ -107,8 +108,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if ticker != "ALL_TICKERS":
-        _process_and_save_ticker(ticker)
+        process_and_save_ticker(ticker)
     else:
         for ticker in TICKERS:
-            _process_and_save_ticker(ticker)
+            process_and_save_ticker(ticker)
 
