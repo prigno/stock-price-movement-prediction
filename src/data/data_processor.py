@@ -3,31 +3,32 @@ from pathlib import Path
 import pandas as pd
 
 
-# tickers available
+# available tickers
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
 
-# original columns
-ORIGINAL_COLUMNS = ["Close", "High", "Low", "Open", "Volume"]
+# number of previous days for which avg is computed
+PREVIOUS_DAYS = list(range(1, 61))
 
 # number of previous days used to compute statistics
-WINDOW_SIZES = [7, 30, 60]
+WINDOW_SIZES = [7, 14, 30, 60]
 
 # statistics computed
 STATISTICS = ["min", "max", "mean", "std"]
 
-# feature columns used by model
-FEATURE_COLUMNS = ORIGINAL_COLUMNS + [
-    f"{column}_{statistic}_{window_size}" 
-    for column in ORIGINAL_COLUMNS 
-    for window_size in WINDOW_SIZES
-    for statistic in STATISTICS
-]
+# feature columns used by model 
+FEATURE_COLUMNS = (
+    ["avg_current"] + 
+    [f"avg_prev_{prev}" for prev in PREVIOUS_DAYS] + 
+    [f"stat_{statistic}_{window_size}" for window_size in WINDOW_SIZES for statistic in STATISTICS]
+)
 
-# target columns to predict
-TARGET_COLUMNS = ["Target_Close", "Target_High", "Target_Low", "Target_Open", "Target_Volume"]
+TARGET_DAYS = list(range(1,8))
+
+# target column to predict
+TARGET_COLUMN = [f"Target_Average_Price_{day}" for day in TARGET_DAYS]
 
 
-def process_data(data: pd.DataFrame) -> pd.DataFrame:
+def _process_data(data: pd.DataFrame) -> pd.DataFrame:
     """
     Process raw stock data for the model.
 
@@ -36,37 +37,42 @@ def process_data(data: pd.DataFrame) -> pd.DataFrame:
 
     Returns:
         pd.DataFrame: processed stock data.
-
     """
-    data = data.copy()
+    data = data.copy() # don't modify the original df
 
     data["Date"] = pd.to_datetime(data["Date"])
-    data = data.sort_values("Date")
+    data = data.sort_values("Date") # make sure dates are ordered
 
-    previous_data = data[ORIGINAL_COLUMNS].shift(1) 
-    for column in ORIGINAL_COLUMNS:
-        for window_size in WINDOW_SIZES:
-            rolling_values = previous_data[column].rolling(window=window_size)
+    data["avg_current"] = (data["High"] + data["Low"]) / 2 # create column with avg price of the current day
 
-            # calculate statistics of previous 7, 30 and 60 days for each row
-            data[f"{column}_min_{window_size}"] = rolling_values.min()
-            data[f"{column}_max_{window_size}"] = rolling_values.max()
-            data[f"{column}_mean_{window_size}"] = rolling_values.mean()
-            data[f"{column}_std_{window_size}"] = rolling_values.std()
+    for prev in PREVIOUS_DAYS:
+        # create columns witch the avg prices of the previous 30 days, one for each column
+        data[f"avg_prev_{prev}"] = data["avg_current"].shift(prev)
 
-    for column in ORIGINAL_COLUMNS:
-        data[f"Target_{column}"] = data[column].shift(-1)
+    previous_data = data["avg_current"].shift(1) # Series containing the previous 30 avg prices (today excluded)
+    for window_size in WINDOW_SIZES:
+        # sliding window of the previouse 7, 14, 30 or 60 days
+        rolling_values = previous_data.rolling(window=window_size) 
+
+        # calculate statistics of previous 7, 14, 30 or 60 days for each row
+        data[f"stat_min_{window_size}"] = rolling_values.min()
+        data[f"stat_max_{window_size}"] = rolling_values.max()
+        data[f"stat_mean_{window_size}"] = rolling_values.mean()
+        data[f"stat_std_{window_size}"] = rolling_values.std()
+
+    for day in TARGET_DAYS:
+        data[f"Target_Average_Price_{day}"] = data["avg_current"].shift(-day)
 
     data = data.dropna()
     data = data.reset_index(drop=True)
 
-    columns = ["Date"] + FEATURE_COLUMNS + TARGET_COLUMNS
+    columns = ["Date"] + FEATURE_COLUMNS + TARGET_COLUMN
     data = data[columns]
 
     return data
 
 
-def process_and_save_ticker(ticker: str) -> None:
+def _process_and_save_ticker(ticker: str) -> None:
     """
     Process and save data of a ticker.
 
@@ -78,20 +84,14 @@ def process_and_save_ticker(ticker: str) -> None:
     raw_data_path = project_root / "data" / "raw" / f"{ticker}.csv"
     data = pd.read_csv(raw_data_path)
 
-    processed_data = process_data(data)
+    processed_data = _process_data(data)
     processed_data_path = project_root / "data" / "processed" / f"{ticker}.csv"
     processed_data_path.parent.mkdir(parents=True, exist_ok=True)
+
     processed_data.to_csv(processed_data_path, index=False)
 
 
-def process_and_save_all_data() -> None:
-    """
-    Process and save data of all tickers.
-    """
-    for ticker in TICKERS:
-        process_and_save_ticker(ticker)
-
-
 if __name__ == "__main__":
-    process_and_save_all_data()
+    for ticker in TICKERS:
+        _process_and_save_ticker(ticker)
 
