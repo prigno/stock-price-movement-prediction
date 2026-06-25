@@ -63,11 +63,13 @@ def process_and_save_ticker(ticker: str) -> None:
     data = pd.read_csv(raw_data_path)
 
     processed_data = _process_data(data)
-    processed_data_path = PROCESSED_DATA_DIR / f"{ticker}.csv"
-    processed_data_path.parent.mkdir(parents=True, exist_ok=True)
 
-    processed_data.to_csv(processed_data_path, index=False)
-    print(f"Processed data for {ticker} saved to {processed_data_path}")
+    output_dir = PROCESSED_DATA_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{ticker}.csv"
+
+    processed_data.to_csv(output_path, index=False)
+    print(f"Processed data for {ticker} saved to {output_path}")
 
 
 if __name__ == "__main__":
