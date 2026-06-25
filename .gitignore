@@ -5,3 +5,5 @@ data/processed
 
 src/models/*.joblib
 src/reports
+
+__pycache__/
