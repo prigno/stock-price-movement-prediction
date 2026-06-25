@@ -9,37 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
 
 
-# tickers available
-TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
-
-# previous days used as features
-PREVIOUS_DAYS = list(range(1, 61))
-
-# number of previous days used to compute statistics
-WINDOW_SIZES = [7, 14, 30, 60]
-
-# statistics computed
-STATISTICS = ["min", "max", "mean", "std"]
-
-# feature columns used by model
-FEATURE_COLUMNS = (
-    ["avg_current"] + 
-    [f"avg_prev_{prev}" for prev in PREVIOUS_DAYS] + 
-    [f"stat_{statistic}_{window_size}" for window_size in WINDOW_SIZES for statistic in STATISTICS]
-)
-
-TARGET_DAYS = list(range(1, 8))
-
-# target column to predict
-TARGET_COLUMNS = [f"Target_Average_Price_{day}" for day in TARGET_DAYS]
-
-# percentage of testing set
-TEST_SIZE = 0.2
-
-# ridge regularization parameter
-ALPHA = 0.2
-
-ROOT_DIR = Path(__file__).resolve().parents[2]
+from src.config import TICKERS, FEATURE_COLUMNS, TARGET_COLUMNS, TEST_SIZE, ALPHA, PROCESSED_DATA_DIR, MODELS_DIR, REPORTS_DIR
 
 
 def _load_processed_data(ticker: str) -> pd.DataFrame:
@@ -52,7 +22,7 @@ def _load_processed_data(ticker: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: processed ticker data.
     """
-    file_path = ROOT_DIR / "data" / "processed" / f"{ticker}.csv"
+    file_path = PROCESSED_DATA_DIR / f"{ticker}.csv"
     if not file_path.exists():
         raise FileNotFoundError(f"Processed data file not found: {file_path}")
 
@@ -67,7 +37,7 @@ def _save_model(ticker: str, model: Ridge, scaler: StandardScaler) -> None:
         ticker (str): stock ticker symbol.
         model (Ridge): trained Ridge Regression model.
     """
-    model_dir = ROOT_DIR / "src" / "models"
+    model_dir = MODELS_DIR
     model_dir.mkdir(parents=True, exist_ok=True)
 
     model_path = model_dir / f"{ticker}_ridge_regression.joblib"
@@ -85,12 +55,28 @@ def _save_report(ticker: str, metrics: pd.DataFrame) -> None:
         ticker (str): stock ticker symbol.
         metrics (pd.DataFrame): evaluation metrics.
     """
-    report_dir = ROOT_DIR / "src" / "reports"
-    report_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = REPORTS_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
     
-    report_path = report_dir / f"{ticker}_ridge_regression_metrics.csv"
+    report_path = output_dir / f"{ticker}_ridge_regression_metrics.csv"
 
     metrics.to_csv(report_path, index=False)
+
+
+def _save_test_predictions(ticker: str, test_predictions: pd.DataFrame) -> None:
+    """
+    Save testing set predictions.
+
+    Args:
+        ticker (str): ticker symbol.
+        test_predictions (pd.DataFrame): actual and predicted values on the test set.
+    """
+    output_dir = REPORTS_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    report_path = output_dir / f"{ticker}_ridge_regression_test_predictions.csv"
+
+    test_predictions.to_csv(report_path, index=False)
 
 
 def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
@@ -127,8 +113,21 @@ def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
 
     metrics = pd.DataFrame({"target": TARGET_COLUMNS, "mae": mae, "rmse": rmse, "r2": r2})
 
-    #_save_model(ticker, model, scaler)
-    #_save_report(ticker, metrics)
+    # DataFrame used for a graphic
+    test_predictions = pd.DataFrame({
+        "Date": data.loc[y_test.index, "Date"],     # date of the rows used for the testing set
+        "Actual_Average_Price_1": y_test["Target_Average_Price_1"],
+        "Predicted_Average_Price_1": y_pred["Target_Average_Price_1"]
+    })
+
+    test_predictions["Absolute_Error"] = (
+        test_predictions["Actual_Average_Price_1"] -
+        test_predictions["Predicted_Average_Price_1"]
+    ).abs()
+
+    _save_model(ticker, model, scaler)
+    _save_report(ticker, metrics)
+    _save_test_predictions(ticker, test_predictions)
 
     print(f"Ticker: {ticker}")
     print(metrics)
