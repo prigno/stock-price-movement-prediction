@@ -14,6 +14,9 @@ END_DATE = "2026-06-01"
 # previous days used as features
 PREVIOUS_DAYS = list(range(1, 61))
 
+# number of days to predict
+PREDICTION_DAYS = 7
+
 # number of previous days used to compute statistics
 WINDOW_SIZES = [7, 14, 30, 60]
 
