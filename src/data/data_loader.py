@@ -4,12 +4,7 @@ import sys
 import pandas as pd
 import yfinance as yf
 
-# tickers available
-TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
-
-# period considered
-START_DATE = "2000-01-01"
-END_DATE = "2026-06-01"
+from src.config import TICKERS, START_DATE, END_DATE, RAW_DATA_DIR
 
 
 def _load_data(ticker, start_date=START_DATE, end_date=END_DATE):
@@ -45,13 +40,7 @@ def _save_data(ticker, data):
         ticker (str): stock ticker symbol.
         data (pd.DataFrame): stock data to save.
     """
-    project_root = Path(__file__).resolve().parents[2]
-    output_dir = project_root / "data" / "raw"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    # parents=True: create intermediate directories if they don't exist
-    # exist_ok=True: don't show any error if the directory already exists
-
-    output_path = output_dir / f"{ticker}.csv"
+    output_path = RAW_DATA_DIR / f"{ticker}.csv"
     data.to_csv(output_path, index=False)
     # index=False: don't save the index (0,1,2...) as a new column
 
