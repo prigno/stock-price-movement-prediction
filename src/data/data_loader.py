@@ -39,7 +39,9 @@ def _save_data(ticker, data):
         ticker (str): stock ticker symbol.
         data (pd.DataFrame): stock data to save.
     """
-    output_path = RAW_DATA_DIR / f"{ticker}.csv"
+    output_dir = RAW_DATA_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{ticker}.csv"
     data.to_csv(output_path, index=False)
     # index=False: don't save the index (0,1,2...) as a new column
 
