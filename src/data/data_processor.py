@@ -62,11 +62,13 @@ def _process_data(data: pd.DataFrame) -> pd.DataFrame:
         data[f"stat_std_{window_size}"] = rolling_values.std()
 
     for day in TARGET_DAYS:
+        # the model must predict for each row the avr price for the next 7 days
         data[f"Target_Average_Price_{day}"] = data["avg_current"].shift(-day)
 
     data = data.dropna()
-    data = data.reset_index(drop=True)
-
+    data = data.reset_index(drop=True) # adjust indexes because some of the first rows
+                                       # and some of the last rows have been removed from dropna()
+    # columns of the processed dataset
     columns = ["Date"] + FEATURE_COLUMNS + TARGET_COLUMN
     data = data[columns]
 
