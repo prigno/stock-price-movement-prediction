@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #f8fafc;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px;
+}
+
+.card {
+    width: 100%;
+    max-width: 680px;
+    padding: 44px;
+    background-color: #111827;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 14px;
+    font-size: 34px;
+    letter-spacing: -0.5px;
+    color: #f8fafc;
+}
+
+.subtitle {
+    margin-bottom: 34px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+label {
+    font-weight: bold;
+    color: #e2e8f0;
+}
+
+input {
+    width: 100%;
+    padding: 15px 16px;
+    font-size: 16px;
+    color: #f8fafc;
+    background-color: #020617;
+    border: 1px solid #475569;
+    border-radius: 10px;
+}
+
+input::placeholder {
+    color: #94a3b8;
+}
+
+input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.buttons-container {
+    display: flex;
+    gap: 14px;
+    margin-top: 22px;
+}
+
+.button {
+    flex: 1;
+    padding: 15px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.button:hover {
+    transform: translateY(-1px);
+}
+
+.primary-button {
+    background-color: #38bdf8;
+    color: #020617;
+}
+
+.primary-button:hover {
+    background-color: #0ea5e9;
+}
+
+.secondary-button {
+    background-color: #334155;
+    color: #f8fafc;
+}
+
+.secondary-button:hover {
+    background-color: #475569;
+}
+
+.messages {
+    margin-bottom: 22px;
+    padding: 14px 16px;
+    background-color: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-left: 5px solid #38bdf8;
+    border-radius: 10px;
+    color: #e0f2fe;
+}
+
+.messages p {
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .card {
+        padding: 28px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .buttons-container {
+        flex-direction: column;
+    }
+}
