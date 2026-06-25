@@ -7,11 +7,11 @@ import yfinance as yf
 TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
 
 # period considered (10 years)
-START_DATE = "2016-06-01"
+START_DATE = "2006-06-01"
 END_DATE = "2026-06-01" # not included in the period
 
 
-def _load_ticker_data(ticker):
+def _load_data(ticker):
     """
     Download historical stock data of a ticker.
 
@@ -34,7 +34,7 @@ def _load_ticker_data(ticker):
     return data
 
 
-def _save_ticker_data(ticker, data):
+def _save_data(ticker, data):
     """
     Save the stock data of a ticker into a CSV file.
 
@@ -55,17 +55,9 @@ def _save_ticker_data(ticker, data):
     print(f"Data for {ticker} saved to {output_path}")
 
 
-def _load_and_save_all_data():
-    """
-    Download and save all historical data for all selected tickers.
-    """
+if __name__ == "__main__":
     for ticker in TICKERS:
         print(f"Loading data for {ticker}...")
-
-        data = _load_ticker_data(ticker)
-        _save_ticker_data(ticker, data)
-
-
-if __name__ == "__main__":
-    _load_and_save_all_data()
+        data = _load_data(ticker)
+        _save_data(ticker, data)
 
