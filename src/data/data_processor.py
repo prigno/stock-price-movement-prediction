@@ -1,32 +1,8 @@
-from pathlib import Path
 import sys
 
 import pandas as pd
 
-
-# available tickers
-TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
-
-# number of previous days for which avg is computed
-PREVIOUS_DAYS = list(range(1, 61))
-
-# number of previous days used to compute statistics
-WINDOW_SIZES = [7, 14, 30, 60]
-
-# statistics computed
-STATISTICS = ["min", "max", "mean", "std"]
-
-# feature columns used by model 
-FEATURE_COLUMNS = (
-    ["avg_current"] + 
-    [f"avg_prev_{prev}" for prev in PREVIOUS_DAYS] + 
-    [f"stat_{statistic}_{window_size}" for window_size in WINDOW_SIZES for statistic in STATISTICS]
-)
-
-TARGET_DAYS = list(range(1,8))
-
-# target column to predict
-TARGET_COLUMN = [f"Target_Average_Price_{day}" for day in TARGET_DAYS]
+from src.config import TICKERS, PREVIOUS_DAYS, WINDOW_SIZES, FEATURE_COLUMNS, TARGET_DAYS, TARGET_COLUMNS, RAW_DATA_DIR, PROCESSED_DATA_DIR
 
 
 def _process_data(data: pd.DataFrame) -> pd.DataFrame:
@@ -69,7 +45,7 @@ def _process_data(data: pd.DataFrame) -> pd.DataFrame:
     data = data.reset_index(drop=True) # adjust indexes because some of the first rows
                                        # and some of the last rows have been removed from dropna()
     # columns of the processed dataset
-    columns = ["Date"] + FEATURE_COLUMNS + TARGET_COLUMN
+    columns = ["Date"] + FEATURE_COLUMNS + TARGET_COLUMNS
     data = data[columns]
 
     return data
@@ -82,13 +58,12 @@ def process_and_save_ticker(ticker: str) -> None:
     Args:
         ticker (str): stock ticker symbol.
     """
-    project_root = Path(__file__).resolve().parents[2]
-
-    raw_data_path = project_root / "data" / "raw" / f"{ticker}.csv"
+    
+    raw_data_path = RAW_DATA_DIR / f"{ticker}.csv"
     data = pd.read_csv(raw_data_path)
 
     processed_data = _process_data(data)
-    processed_data_path = project_root / "data" / "processed" / f"{ticker}.csv"
+    processed_data_path = PROCESSED_DATA_DIR / f"{ticker}.csv"
     processed_data_path.parent.mkdir(parents=True, exist_ok=True)
 
     processed_data.to_csv(processed_data_path, index=False)
