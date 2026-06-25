@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import pandas as pd
 import yfinance as yf
@@ -56,8 +57,24 @@ def _save_data(ticker, data):
 
 
 if __name__ == "__main__":
-    for ticker in TICKERS:
+    if len(sys.argv) != 2:
+        print("Usage: <ticker> required as argument")
+        print(f"Available tickrs:e {TICKERS}")
+        sys.exit(1)
+
+    ticker = sys.argv[1].upper()
+    if ticker not in TICKERS and ticker != "ALL_TICKERS":
+        print(f"Invalid ticker: {ticker}")
+        print(f"Available tickers: {TICKERS}")
+        sys.exit(1)
+
+    if ticker != "ALL_TICKERS":
         print(f"Loading data for {ticker}...")
         data = _load_data(ticker)
         _save_data(ticker, data)
+    else:
+        for ticker in TICKERS:
+            print(f"Loading data for {ticker}...")
+            data = _load_data(ticker)
+            _save_data(ticker, data)
 

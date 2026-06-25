@@ -1,4 +1,5 @@
 from pathlib import Path
+import sys
 
 import pandas as pd
 
@@ -92,6 +93,20 @@ def _process_and_save_ticker(ticker: str) -> None:
 
 
 if __name__ == "__main__":
-    for ticker in TICKERS:
+    if len(sys.argv) != 2:
+        print("Usage: <ticker> required as argument")
+        print(f"Available tickrs:e {TICKERS}")
+        sys.exit(1)
+
+    ticker = sys.argv[1].upper()
+    if ticker not in TICKERS and ticker != "ALL_TICKERS":
+        print(f"Invalid ticker: {ticker}")
+        print(f"Available tickers: {TICKERS}")
+        sys.exit(1)
+
+    if ticker != "ALL_TICKERS":
         _process_and_save_ticker(ticker)
+    else:
+        for ticker in TICKERS:
+            _process_and_save_ticker(ticker)
 

@@ -142,6 +142,7 @@ if __name__ == "__main__":
         print(f"Invalid ticker: {ticker}")
         print(f"Available tickers: {TICKERS}")
         sys.exit(1)
+        
     if ticker != "ALL_TICKERS":
         _train_and_evaluate_model(ticker)
     else:
