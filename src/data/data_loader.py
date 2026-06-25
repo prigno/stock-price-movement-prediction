@@ -87,7 +87,7 @@ if __name__ == "__main__":
     if ticker != "ALL_TICKERS":
         load_and_save_ticker(ticker)
     else:
-        for ticker in TICKERS:
-            load_and_save_ticker(ticker)
+        for t in TICKERS:
+            load_and_save_ticker(t)
             
 
