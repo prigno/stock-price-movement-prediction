@@ -142,77 +142,137 @@ input:focus {
 
 .results-container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 40px 24px;
+    padding: 44px 24px 56px;
 }
 
 .results-header {
-    margin-bottom: 28px;
+    margin-bottom: 34px;
+    padding: 28px 32px;
+    background-color: rgba(15, 23, 42, 0.75);
+    border: 1px solid #334155;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+}
+
+.results-header h1 {
+    margin-bottom: 10px;
 }
 
 .back-link {
     display: inline-block;
-    margin-top: 12px;
-    color: #38bdf8;
+    margin-top: 8px;
+    padding: 11px 18px;
+    color: #020617;
+    background-color: #38bdf8;
+    border-radius: 10px;
     font-weight: bold;
     text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
 }
 
 .back-link:hover {
-    text-decoration: underline;
+    background-color: #0ea5e9;
+    text-decoration: none;
+    transform: translateY(-1px);
 }
 
 .plot-card {
-    margin-bottom: 32px;
-    padding: 28px;
+    margin-bottom: 34px;
+    padding: 30px;
     background-color: #111827;
     border: 1px solid #334155;
-    border-radius: 18px;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+    border-radius: 22px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.26);
 }
 
 .plot-card h2 {
     margin-top: 0;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     color: #f8fafc;
+    font-size: 24px;
+    letter-spacing: -0.3px;
 }
 
 .plot-description {
-    margin-bottom: 18px;
+    margin-top: 0;
+    margin-bottom: 20px;
     color: #cbd5e1;
+    line-height: 1.5;
 }
 
 .plot-card img {
+    display: block;
     width: 100%;
-    border-radius: 12px;
+    margin-top: 16px;
     background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
 }
 
-.predictions-table {
-    width: 100%;
-    margin-top: 24px;
-    border-collapse: collapse;
-    overflow: hidden;
-    border-radius: 12px;
-}
-
-.predictions-table th,
-.predictions-table td {
-    padding: 14px 16px;
-    text-align: left;
-    border-bottom: 1px solid #334155;
-}
-
-.predictions-table th {
+.day-buttons {
+    margin-top: 26px;
+    padding: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
     background-color: #020617;
-    color: #f8fafc;
+    border: 1px solid #334155;
+    border-radius: 16px;
 }
 
-.predictions-table td {
+.day-button {
+    min-width: 76px;
+    padding: 10px 14px;
     color: #e2e8f0;
+    background-color: #1e293b;
+    border: 1px solid #475569;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
-.predictions-table tr:last-child td {
-    border-bottom: none;
+.day-button:hover {
+    background-color: #334155;
+    border-color: #38bdf8;
+    transform: translateY(-1px);
+}
+
+.day-button.active {
+    color: #020617;
+    background-color: #38bdf8;
+    border-color: #38bdf8;
+}
+
+@media (max-width: 700px) {
+    .results-container {
+        padding: 28px 16px 40px;
+    }
+
+    .results-header {
+        padding: 24px;
+    }
+
+    .plot-card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    .plot-card h2 {
+        font-size: 21px;
+    }
+
+    .day-buttons {
+        justify-content: flex-start;
+    }
+
+    .day-button {
+        flex: 1;
+        min-width: 88px;
+    }
 }

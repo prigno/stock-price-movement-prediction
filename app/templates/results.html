@@ -10,30 +10,72 @@
         <section class="results-header">
             <h1>{{ ticker }} Results</h1>
             <p class="subtitle">Historical average price, model evaluation and next 7 days predictions.</p>
-            <a class="back-link" href="{{ url_for('index', ticker=ticker) }}">Home</a>
         </section>
 
         <section class="plot-card">
             <h2>Historical average price</h2>
-            <img src="{{ url_for('static', filename=image_paths.average_price) }}" alt="Average price plot">
+            <img
+                src="{{ url_for('static', filename=image_paths.average_price) }}"
+                alt="Average price plot"
+            >
         </section>
 
         <section class="plot-card">
             <h2>Model evaluation</h2>
             <p class="plot-description">This plot compares the real average price and the predicted average price.</p>
-            <img src="{{ url_for('static', filename=image_paths.model_evaluation) }}" alt="Model evaluation plot">
-        </section>
-
-        <section class="plot-card">
+            <img 
+                id="model-evaluation-image"
+                src="{{ url_for('static', filename=image_paths.model_evaluation[1]) }}" 
+                alt="Model evaluation plot"
+            >
+            <br><br>
             <h2>Absolute error</h2>
             <p class="plot-description">This plot shows the absolute error on predictions.</p>
-            <img src="{{ url_for('static', filename=image_paths.absolute_error) }}" alt="Absolute error plot">
+            <img 
+                id="absolute-error-image"
+                src="{{ url_for('static', filename=image_paths.absolute_error[1]) }}"
+                alt="Absolute error plot"
+            >
+            <div class="day-buttons">
+                {% for day in range(1, 8) %}
+                    <button
+                        type="button"
+                        class="day-button day-selector-button {% if day == 1 %}active{% endif %}"
+                        data-model-image="{{ url_for('static', filename=image_paths.model_evaluation[day]) }}"
+                        data-error-image="{{ url_for('static', filename=image_paths.absolute_error[day]) }}"
+                    >
+                        Day {{ day }}
+                    </button>
+                {% endfor %}
+            </div>
         </section>
 
         <section class="plot-card">
             <h2>Next 7 days predictions</h2>
-            <img src="{{ url_for('static', filename=image_paths.predictions) }}" alt="Next 7 days prediction plot">
+            <img
+                src="{{ url_for('static', filename=image_paths.predictions) }}"
+                alt="Next 7 days prediction plot"
+            >
         </section>
+        <a class="back-link" href="{{ url_for('index', ticker=ticker) }}">Home</a>
     </main>
+    <script>
+        const modelEvaluationImage = document.getElementById("model-evaluation-image");
+        const absoluteErrorImage = document.getElementById("absolute-error-image");
+        const dayButtons = document.querySelectorAll(".day-selector-button");
+
+        dayButtons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                modelEvaluationImage.src = button.dataset.modelImage;
+                absoluteErrorImage.src = button.dataset.errorImage;
+
+                dayButtons.forEach(function(currentButton) {
+                    currentButton.classList.remove("active");
+                });
+
+                button.classList.add("active");
+            });
+        });
+    </script>
 </body>
 </html>
