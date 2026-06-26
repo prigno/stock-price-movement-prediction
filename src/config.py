@@ -12,13 +12,13 @@ START_DATE = "2000-01-01"
 END_DATE = "2026-06-01"
 
 # previous days used as features
-PREVIOUS_DAYS = list(range(1, 61))
+PREVIOUS_DAYS = list(range(1, 8))
 
 # number of days to predict
 PREDICTION_DAYS = 7
 
 # number of previous days used to compute statistics
-WINDOW_SIZES = [7, 14, 30, 60]
+WINDOW_SIZES = [7]
 
 # statistics computed
 STATISTICS = ["min", "max", "mean", "std"]
@@ -40,7 +40,7 @@ TARGET_COLUMNS = [f"Target_Average_Price_{day}" for day in TARGET_DAYS]
 TEST_SIZE = 0.2
 
 # ridge regularization parameter
-ALPHA = 0.5
+ALPHA = 0.05
 
 RAW_DATA_DIR = ROOT_DIR / "data" / "raw"
 
