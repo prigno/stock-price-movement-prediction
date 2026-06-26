@@ -13,7 +13,7 @@ from src.data.data_loader import load_and_save_ticker
 from src.data.data_processor import process_and_save_ticker
 from src.models.ridge_regression import train_and_evaluate_model
 
-from models.ridge_prediction import predict_next_7_days
+from src.models.ridge_prediction import predict_next_7_days
 from src.visualization.plots import all_plots
 
 
