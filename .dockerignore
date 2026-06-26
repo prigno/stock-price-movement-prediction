@@ -1,0 +1,13 @@
+__pycahce__/
+
+.venv/
+
+.git/
+.gitignore
+
+data/raw/
+data/processed/
+data/prediction/
+
+src/models/*.joblib
+src/reports
