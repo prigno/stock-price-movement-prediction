@@ -85,14 +85,14 @@ def results():
         return redirect(url_for("index"))
 
     try:
-        predictions = predict_next_7_days(ticker)
+        predict_next_7_days(ticker)
         image_paths = all_plots(ticker)
 
     except FileNotFoundError as error:
         flash(str(error))
         return redirect(url_for("index", ticker=ticker))
 
-    return render_template("results.html", ticker=ticker, predictions=predictions.to_dict("records"), image_paths=image_paths)
+    return render_template("results.html", ticker=ticker, image_paths=image_paths)
 
 
 if __name__ == "__main__":
