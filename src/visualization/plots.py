@@ -1,9 +1,8 @@
-from pathlib import Path
-
 import matplotlib
-matplotlib.use("svg") # use a non interactive beckend because want to save the files only
+matplotlib.use("svg") # use a non interactive backend because want to save the files only
 
 import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 
 from src.config import STATIC_IMAGES_DIR, RAW_DATA_DIR, REPORTS_DIR, PREDICTIONS_DIR
@@ -69,10 +68,10 @@ def model_evaluation_plot(ticker: str) -> str:
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
 
-    plt.figure(figsize=(11, 5))
+    plt.figure(figsize=(1200, 600, "px"))
     plt.plot(data["Date"], data["Actual_Average_Price_1"], label="Real values")
     plt.plot(data["Date"], data["Predicted_Average_Price_1"], label="Predicted values")
-    plt.title(f"{ticker} Model Evaluation on Test Set")
+    plt.title(f"{ticker} Model Evaluation")
     plt.xlabel("Date")
     plt.ylabel("Average Price")
     plt.legend()
@@ -106,9 +105,9 @@ def error_plot(ticker: str) -> str:
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
 
-    plt.figure(figsize=(11, 5))
+    plt.figure(figsize=(1200, 600, "px"))
     plt.plot(data["Date"], data["Absolute_Error"])
-    plt.title(f"{ticker} Absolute Error on Test Set")
+    plt.title(f"{ticker} Absolute Error")
     plt.xlabel("Date")
     plt.ylabel("Absolute Error")
     plt.grid(True)
@@ -141,7 +140,7 @@ def prediction_plot(ticker: str) -> str:
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
 
-    plt.figure(figsize=(9, 5))
+    plt.figure(figsize=(1200, 600, "px"))
     plt.plot(data["Date"], data["Predicted_Average_Price"], marker="o")
     plt.title(f"{ticker} Next 7 Business Days Predictions")
     plt.xlabel("Date")
