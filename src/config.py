@@ -40,7 +40,7 @@ TARGET_COLUMNS = [f"Target_Average_Price_{day}" for day in TARGET_DAYS]
 TEST_SIZE = 0.2
 
 # ridge regularization parameter
-ALPHA = 0.05
+ALPHA = 0.10
 
 RAW_DATA_DIR = ROOT_DIR / "data" / "raw"
 
