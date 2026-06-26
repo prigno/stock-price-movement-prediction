@@ -1,8 +1,11 @@
+from pathlib import Path
 import sys
 
 import joblib
 import pandas as pd
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(PROJECT_ROOT))
 from src.config import FEATURE_COLUMNS, MODELS_DIR, PREDICTION_DAYS, PREDICTIONS_DIR, PREVIOUS_DAYS, RAW_DATA_DIR, TICKERS, WINDOW_SIZES
 
 

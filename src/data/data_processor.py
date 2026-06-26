@@ -1,7 +1,10 @@
+from pathlib import Path
 import sys
 
 import pandas as pd
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(PROJECT_ROOT))
 from src.config import TICKERS, PREVIOUS_DAYS, WINDOW_SIZES, FEATURE_COLUMNS, TARGET_DAYS, TARGET_COLUMNS, RAW_DATA_DIR, PROCESSED_DATA_DIR
 
 

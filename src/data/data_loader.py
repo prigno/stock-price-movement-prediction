@@ -1,8 +1,11 @@
+from pathlib import Path
 import sys
 
 import pandas as pd
 import yfinance as yf
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(PROJECT_ROOT))
 from src.config import TICKERS, START_DATE, END_DATE, RAW_DATA_DIR
 
 

@@ -1,3 +1,6 @@
+from pathlib import Path
+import sys
+
 import matplotlib
 matplotlib.use("svg") # use a non interactive backend because want to save the files only
 
@@ -5,6 +8,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(PROJECT_ROOT))
 from src.config import STATIC_IMAGES_DIR, REPORTS_DIR, PREDICTIONS_DIR, TARGET_DAYS
 
 
