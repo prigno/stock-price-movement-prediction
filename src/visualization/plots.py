@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-from src.config import STATIC_IMAGES_DIR, RAW_DATA_DIR, REPORTS_DIR, PREDICTIONS_DIR
+from src.config import STATIC_IMAGES_DIR, RAW_DATA_DIR, REPORTS_DIR, PREDICTIONS_DIR, TARGET_DAYS
 
 
 def avg_price_plot(ticker: str) -> str:
@@ -46,12 +46,13 @@ def avg_price_plot(ticker: str) -> str:
     return f"images/{image_name}"
 
 
-def model_evaluation_plot(ticker: str) -> str:
+def model_evaluation_plot(ticker: str, day: int) -> str:
     """
     Create model evaluation plot.
 
     Args:
         ticker (str): ticker symbol.
+        day (int): target day.
 
     Returns:
         str: relative path of the generated image.
@@ -64,14 +65,14 @@ def model_evaluation_plot(ticker: str) -> str:
     data = pd.read_csv(predictions_path)
     data["Date"] = pd.to_datetime(data["Date"])
 
-    image_name = f"{ticker}_model_evaluation.svg"
+    image_name = f"{ticker}_model_evaluation_{day}.svg"
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
 
     plt.figure(figsize=(1200, 600, "px"))
-    plt.plot(data["Date"], data["Actual_Average_Price_1"], label="Real values")
-    plt.plot(data["Date"], data["Predicted_Average_Price_1"], label="Predicted values")
-    plt.title(f"{ticker} Model Evaluation")
+    plt.plot(data["Date"], data[f"Actual_Average_Price_{day}"], label="Real values")
+    plt.plot(data["Date"], data[f"Predicted_Average_Price_{day}"], label="Predicted values")
+    plt.title(f"{ticker} Model Evaluation - Day {day}")
     plt.xlabel("Date")
     plt.ylabel("Average Price")
     plt.legend()
@@ -83,12 +84,13 @@ def model_evaluation_plot(ticker: str) -> str:
     return f"images/{image_name}"
 
 
-def error_plot(ticker: str) -> str:
+def error_plot(ticker: str, day: int) -> str:
     """
     Create absolute error plot.
 
     Args:
         ticker (str): stock ticker symbol.
+        day (int): target day.
 
     Returns:
         str: relative path of the generated image.
@@ -101,15 +103,18 @@ def error_plot(ticker: str) -> str:
     data = pd.read_csv(predictions_path)
     data["Date"] = pd.to_datetime(data["Date"])
 
-    image_name = f"{ticker}_absolute_error.svg"
+    image_name = f"{ticker}_absolute_error_{day}.svg"
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
 
     plt.figure(figsize=(1200, 600, "px"))
-    plt.plot(data["Date"], data["Absolute_Error"])
-    plt.title(f"{ticker} Absolute Error")
-    plt.xlabel("Date")
-    plt.ylabel("Absolute Error")
+    #plt.plot(data["Date"], data[f"Absolute_Error_{day}"])
+    sns.histplot(data=data, x=f"Absolute_Error_{day}", bins=30, kde=True)
+    mean_error = data[f"Absolute_Error_{day}"].mean()
+    plt.axvline(mean_error, linestyle="--", label=f"Mean error: {mean_error:.2f}")
+    plt.title(f"{ticker} Absolute Error - Day {day}")
+    plt.xlabel("Absolute Error")
+    plt.ylabel("Frequency")
     plt.grid(True)
     plt.tight_layout()
     plt.savefig(image_path)
@@ -142,6 +147,7 @@ def prediction_plot(ticker: str) -> str:
 
     plt.figure(figsize=(1200, 600, "px"))
     plt.plot(data["Date"], data["Predicted_Average_Price"], marker="o")
+    plt.xticks(ticks=data["Date"], labels=data["Date"].dt.strftime("%Y-%m-%d"), rotation=30)
     plt.title(f"{ticker} Next 7 Business Days Predictions")
     plt.xlabel("Date")
     plt.ylabel("Predicted Average Price")
@@ -165,10 +171,14 @@ def all_plots(ticker: str) -> dict:
     """
     image_paths = {
         "average_price": avg_price_plot(ticker),
-        "model_evaluation": model_evaluation_plot(ticker),
-        "absolute_error": error_plot(ticker),
+        "model_evaluation": {},
+        "absolute_error": {},
         "predictions": prediction_plot(ticker)
     }
+
+    for day in TARGET_DAYS:
+        image_paths["model_evaluation"][day] = model_evaluation_plot(ticker, day)
+        image_paths["absolute_error"][day] = error_plot(ticker, day)
 
     return image_paths
 
