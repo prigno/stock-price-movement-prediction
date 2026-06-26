@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ ticker }} Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="results-container">
+        <section class="results-header">
+            <h1>{{ ticker }} Results</h1>
+            <p class="subtitle">Historical average price, model evaluation and next 7 days predictions.</p>
+            <a class="back-link" href="{{ url_for('index', ticker=ticker) }}">Home</a>
+        </section>
+
+        <section class="plot-card">
+            <h2>Historical average price</h2>
+            <img src="{{ url_for('static', filename=image_paths.average_price) }}" alt="Average price plot">
+        </section>
+
+        <section class="plot-card">
+            <h2>Model evaluation</h2>
+            <p class="plot-description">This plot compares the real average price and the predicted average price.</p>
+            <img src="{{ url_for('static', filename=image_paths.model_evaluation) }}" alt="Model evaluation plot">
+        </section>
+
+        <section class="plot-card">
+            <h2>Absolute error</h2>
+            <p class="plot-description">This plot shows the absolute error on predictions.</p>
+            <img src="{{ url_for('static', filename=image_paths.absolute_error) }}" alt="Absolute error plot">
+        </section>
+
+        <section class="plot-card">
+            <h2>Next 7 days predictions</h2>
+            <img src="{{ url_for('static', filename=image_paths.predictions) }}" alt="Next 7 days prediction plot">
+            <table class="predictions-table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Date</th>
+                        <th>Predicted average price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prediction in predictions %}
+                        <tr>
+                            <td>{{ prediction.Day }}</td>
+                            <td>{{ prediction.Date }}</td>
+                            <td>{{ "%.2f"|format(prediction.Predicted_Average_Price) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>
