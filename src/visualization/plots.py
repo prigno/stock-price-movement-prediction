@@ -5,45 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-from src.config import STATIC_IMAGES_DIR, RAW_DATA_DIR, REPORTS_DIR, PREDICTIONS_DIR, TARGET_DAYS
-
-
-def avg_price_plot(ticker: str) -> str:
-    """
-    Create average price plot.
-
-    Args:
-        ticker (str): ticker symbol.
-
-    Returns:
-        str: relative path of the generated image.
-    """
-    data_path = RAW_DATA_DIR / f"{ticker}.csv"
-
-    if not data_path.exists():
-        raise FileNotFoundError(f"Raw data file not found: {data_path}")
-
-    data = pd.read_csv(data_path)
-    data["Date"] = pd.to_datetime(data["Date"])
-    data = data.sort_values("Date")
-
-    data["Average_Price"] = (data["High"] + data["Low"]) / 2
-
-    image_name = f"{ticker}_average_price.svg"
-    STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-    image_path = STATIC_IMAGES_DIR / image_name
-
-    plt.figure(figsize=(1200, 600, "px"))
-    plt.plot(data["Date"], data["Average_Price"])
-    plt.title(f"{ticker} Average Price")
-    plt.xlabel("Date")
-    plt.ylabel("Average Price")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(image_path)
-    plt.close()
-
-    return f"images/{image_name}"
+from src.config import STATIC_IMAGES_DIR, REPORTS_DIR, PREDICTIONS_DIR, TARGET_DAYS
 
 
 def model_evaluation_plot(ticker: str, day: int) -> str:
@@ -170,7 +132,6 @@ def all_plots(ticker: str) -> dict:
         dict: generated image paths.
     """
     image_paths = {
-        "average_price": avg_price_plot(ticker),
         "model_evaluation": {},
         "absolute_error": {},
         "predictions": prediction_plot(ticker)
