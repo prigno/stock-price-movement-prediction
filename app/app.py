@@ -13,6 +13,9 @@ from src.data.data_loader import load_and_save_ticker
 from src.data.data_processor import process_and_save_ticker
 from src.models.ridge_regression import train_and_evaluate_model
 
+from models.ridge_prediction import predict_next_7_days
+from src.visualization.plots import all_plots
+
 
 app = Flask(__name__)
 # !-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!#
@@ -81,9 +84,15 @@ def results():
         flash("Please select a valid ticker before showing results.")
         return redirect(url_for("index"))
 
-    flash(f"Results page for {ticker} will be implemented later.")
+    try:
+        predictions = predict_next_7_days(ticker)
+        image_paths = all_plots(ticker)
 
-    return redirect(url_for("index", ticker=ticker))
+    except FileNotFoundError as error:
+        flash(str(error))
+        return redirect(url_for("index", ticker=ticker))
+
+    return render_template("results.html", ticker=ticker, predictions=predictions.to_dict("records"), image_paths=image_paths)
 
 
 if __name__ == "__main__":
