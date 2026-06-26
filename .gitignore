@@ -8,3 +8,5 @@ src/models/*.joblib
 src/reports
 
 __pycache__/
+
+app/static/images
