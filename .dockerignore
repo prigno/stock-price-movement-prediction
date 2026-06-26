@@ -11,3 +11,5 @@ data/prediction/
 
 src/models/*.joblib
 src/reports
+
+stats.txt

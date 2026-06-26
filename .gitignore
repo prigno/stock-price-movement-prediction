@@ -10,3 +10,5 @@ src/reports
 __pycache__/
 
 app/static/images
+
+stats.txt
