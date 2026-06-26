@@ -9,7 +9,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import StandardScaler
 
 
-from src.config import TICKERS, FEATURE_COLUMNS, TARGET_COLUMNS, TEST_SIZE, ALPHA, PROCESSED_DATA_DIR, MODELS_DIR, REPORTS_DIR
+from src.config import TICKERS, FEATURE_COLUMNS, TARGET_COLUMNS, TEST_SIZE, ALPHA, PROCESSED_DATA_DIR, MODELS_DIR, REPORTS_DIR, TARGET_DAYS
 
 
 def _load_processed_data(ticker: str) -> pd.DataFrame:
@@ -113,21 +113,22 @@ def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
 
     metrics = pd.DataFrame({"target": TARGET_COLUMNS, "mae": mae, "rmse": rmse, "r2": r2})
 
-    # DataFrame used for a graphic
-    test_predictions = pd.DataFrame({
-        "Date": data.loc[y_test.index, "Date"],     # date of the rows used for the testing set
-        "Actual_Average_Price_1": y_test["Target_Average_Price_1"],
-        "Predicted_Average_Price_1": y_pred["Target_Average_Price_1"]
-    })
+    # DataFrame used for the evaluation model graphic
+    predictions = pd.DataFrame()
+    predictions["Date"] = data.loc[y_test.index, "Date"]
 
-    test_predictions["Absolute_Error"] = (
-        test_predictions["Actual_Average_Price_1"] -
-        test_predictions["Predicted_Average_Price_1"]
-    ).abs()
+    for day in TARGET_DAYS:
+        predictions[f"Actual_Average_Price_{day}"] = y_test[f"Target_Average_Price_{day}"]
+        predictions[f"Predicted_Average_Price_{day}"] = y_pred[f"Target_Average_Price_{day}"]
+        
+        predictions[f"Absolute_Error_{day}"] = (
+            predictions[f"Actual_Average_Price_{day}"] -
+            predictions[f"Predicted_Average_Price_{day}"]
+        ).abs()
 
     _save_model(ticker, model, scaler)
     _save_report(ticker, metrics)
-    _save_test_predictions(ticker, test_predictions)
+    _save_test_predictions(ticker, predictions)
 
     print(f"Ticker: {ticker}")
     print(metrics)
