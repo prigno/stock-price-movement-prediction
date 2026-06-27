@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ ticker }} Backtest</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="results-container">
+        <section class="results-header">
+            <h1>{{ ticker }} Backtest</h1>
+            <p class="subtitle">Backtesting results for the trading strategy based on Ridge Regression predictions.</p>
+        </section>
+
+        <section class="plot-card">
+            <h2>Strategy capital vs buy and hold</h2>
+            <p class="plot-description">This plot compares the capital obtained by the model-based strategy and by a buy-and-hold strategy.</p>
+            <img
+                src="{{ url_for('static', filename=image_paths.capital_comparison) }}"
+                alt="Backtest capital comparison plot"
+            >
+        </section>
+
+        <section class="plot-card">
+            <h2>Market return distribution by signal</h2>
+            <p class="plot-description">This violinplot compares the real next-day market returns when the strategy is invested and when it is not invested.</p>
+            <img
+                src="{{ url_for('static', filename=image_paths.market_return_violinplot) }}"
+                alt="Backtest return violinplot"
+            >
+        </section>
+
+        <section class="plot-card">
+            <h2>Backtesting metrics</h2>
+            <p class="plot-description">Summary of the strategy performance compared with buy and hold.</p>
+
+            <table class="metrics-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in metrics %}
+                        <tr>
+                            <td>{{ row.metric.replace("_", " ").capitalize() }}</td>
+                            <td>{{ "%.4f"|format(row.value) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <a class="back-link" href="{{ url_for('index', ticker=ticker) }}">Home</a>
+    </main>
+</body>
+</html>
