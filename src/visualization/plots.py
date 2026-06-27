@@ -148,3 +148,99 @@ def all_plots(ticker: str) -> dict:
 
     return image_paths
 
+
+def backtest_capital_comparison_plot(ticker: str) -> str:
+    """
+    Create backtesting capital comparison plot.
+
+    Args:
+        ticker (str): ticker symbol.
+
+    Returns:
+        str: relative path of the generated image.
+    """
+    results_path = REPORTS_DIR / f"{ticker}_backtest_results.csv"
+
+    if not results_path.exists():
+        raise FileNotFoundError(f"Backtest results file not found: {results_path}")
+
+    data = pd.read_csv(results_path)
+    data["Date"] = pd.to_datetime(data["Date"])
+
+    image_name = f"{ticker}_backtest_capital_comparison.svg"
+    STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    image_path = STATIC_IMAGES_DIR / image_name
+
+    plt.figure(figsize=(1200, 600, "px"))
+    plt.plot(data["Date"], data["Strategy_Capital"], label="Strategy capital")
+    plt.plot(data["Date"], data["Buy_Hold_Capital"], label="Buy and hold capital")
+    plt.title(f"{ticker} Backtest - Strategy vs Buy and Hold")
+    plt.xlabel("Date")
+    plt.ylabel("Capital")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(image_path)
+    plt.close()
+
+    return f"images/{image_name}"
+
+
+def backtest_market_return_violinplot(ticker: str) -> str:
+    """
+    Create market return violin plot grouped by signal.
+
+    Args:
+        ticker (str): stock ticker symbol.
+
+    Returns:
+        str: relative path of the generated image.
+    """
+    backtest_path = REPORTS_DIR / f"{ticker}_backtest_results.csv"
+
+    if not backtest_path.exists():
+        raise FileNotFoundError(f"Backtest results file not found: {backtest_path}")
+
+    data = pd.read_csv(backtest_path)
+
+    data["Signal"] = data["Signal"].map({
+        1: "Invested",
+        0: "Not invested",
+        True: "Invested",
+        False: "Not invested"
+    }).fillna(data["Signal"])
+
+    image_name = f"{ticker}_backtest_market_return_violinplot.svg"
+    STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    image_path = STATIC_IMAGES_DIR / image_name
+
+    plt.figure(figsize=(1200, 600, "px"))
+    sns.violinplot(data=data, x="Signal", y="Market_Return", inner="quartile")
+    plt.title(f"{ticker} Backtest - Market Return Distribution by Signal")
+    plt.xlabel("Signal")
+    plt.ylabel("Next-Day Market Return")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(image_path)
+    plt.close()
+
+    return f"images/{image_name}"
+
+
+def all_backtest_plots(ticker: str) -> dict:
+    """
+    Create all backtesting plots.
+
+    Args:
+        ticker (str): ticker symbol.
+
+    Returns:
+        dict: generated image paths.
+    """
+    image_paths = {
+        "capital_comparison": backtest_capital_comparison_plot(ticker),
+        "market_return_violinplot": backtest_market_return_violinplot(ticker)
+        
+    }
+
+    return image_paths
