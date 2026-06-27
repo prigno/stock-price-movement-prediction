@@ -118,6 +118,7 @@ def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     # DataFrame used for the evaluation model graphic
     predictions = pd.DataFrame()
     predictions["Date"] = data.loc[y_test.index, "Date"]
+    predictions["Current_Average_Price"] = data.loc[y_test.index, "avg_current"]
 
     for day in TARGET_DAYS:
         predictions[f"Actual_Average_Price_{day}"] = y_test[f"Target_Average_Price_{day}"]
