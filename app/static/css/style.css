@@ -276,3 +276,31 @@ input:focus {
         min-width: 88px;
     }
 }
+
+.metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.metrics-table th,
+.metrics-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #334155;
+    text-align: left;
+}
+
+.metrics-table th {
+    background-color: #020617;
+    color: #f8fafc;
+}
+
+.metrics-table td {
+    color: #e2e8f0;
+}
+
+.metrics-table tr:last-child td {
+    border-bottom: none;
+}
