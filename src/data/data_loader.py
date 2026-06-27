@@ -29,6 +29,8 @@ def _load_data(ticker, start_date=START_DATE, end_date=END_DATE):
     # data of each ticker is saved on a different file, so the <ticker_name> isn't needed
     data.columns = data.columns.get_level_values(0)
     data.columns.name = None # Remove the old name of the group of columns (price)
+
+    data = data.dropna()
     data = data.reset_index()
 
     return data
