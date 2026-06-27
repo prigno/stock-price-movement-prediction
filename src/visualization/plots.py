@@ -174,7 +174,7 @@ def backtest_capital_comparison_plot(ticker: str) -> str:
     plt.figure(figsize=(1200, 600, "px"))
     plt.plot(data["Date"], data["Strategy_Capital"], label="Strategy capital")
     plt.plot(data["Date"], data["Buy_Hold_Capital"], label="Buy and hold capital")
-    plt.title(f"{ticker} Backtest - Strategy vs Buy and Hold")
+    plt.title(f"{ticker} Strategy vs Buy and Hold")
     plt.xlabel("Date")
     plt.ylabel("Capital")
     plt.legend()
@@ -186,7 +186,7 @@ def backtest_capital_comparison_plot(ticker: str) -> str:
     return f"images/{image_name}"
 
 
-def backtest_market_return_violinplot(ticker: str) -> str:
+def backtest_market_return_plot(ticker: str) -> str:
     """
     Create market return violin plot grouped by signal.
 
@@ -205,20 +205,17 @@ def backtest_market_return_violinplot(ticker: str) -> str:
 
     data["Signal"] = data["Signal"].map({
         1: "Invested",
-        0: "Not invested",
-        True: "Invested",
-        False: "Not invested"
-    }).fillna(data["Signal"])
+        0: "Not invested"
+    })
 
     image_name = f"{ticker}_backtest_market_return_violinplot.svg"
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
-
     plt.figure(figsize=(1200, 600, "px"))
     sns.violinplot(data=data, x="Signal", y="Market_Return", inner="quartile")
-    plt.title(f"{ticker} Backtest - Market Return Distribution by Signal")
-    plt.xlabel("Signal")
-    plt.ylabel("Next-Day Market Return")
+    plt.title(f"{ticker} - Market Return Distribution")
+    plt.xlabel("Capital condition")
+    plt.ylabel("Next Day Market Return")
     plt.grid(True)
     plt.tight_layout()
     plt.savefig(image_path)
@@ -239,8 +236,7 @@ def all_backtest_plots(ticker: str) -> dict:
     """
     image_paths = {
         "capital_comparison": backtest_capital_comparison_plot(ticker),
-        "market_return_violinplot": backtest_market_return_violinplot(ticker)
-        
+        "market_return": backtest_market_return_plot(ticker)
     }
 
     return image_paths
