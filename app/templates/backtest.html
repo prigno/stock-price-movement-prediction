@@ -13,8 +13,8 @@
         </section>
 
         <section class="plot-card">
-            <h2>Strategy capital vs buy and hold</h2>
-            <p class="plot-description">This plot compares the capital obtained by the model-based strategy and by a buy-and-hold strategy.</p>
+            <h2>Strategy vs Buy and Hold</h2>
+            <p class="plot-description">This plot compares the capital obtained by the model based strategy and by a buy and hold strategy.</p>
             <img
                 src="{{ url_for('static', filename=image_paths.capital_comparison) }}"
                 alt="Backtest capital comparison plot"
@@ -22,10 +22,10 @@
         </section>
 
         <section class="plot-card">
-            <h2>Market return distribution by signal</h2>
-            <p class="plot-description">This violinplot compares the real next-day market returns when the strategy is invested and when it is not invested.</p>
+            <h2>Market return distribution</h2>
+            <p class="plot-description">This violinplot compares the real next-day market returns when the capital is invested and when it is not invested.</p>
             <img
-                src="{{ url_for('static', filename=image_paths.market_return_violinplot) }}"
+                src="{{ url_for('static', filename=image_paths.market_return) }}"
                 alt="Backtest return violinplot"
             >
         </section>
