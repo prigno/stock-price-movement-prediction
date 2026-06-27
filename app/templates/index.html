@@ -45,6 +45,10 @@
                     <button type="button" class="button secondary-button" onclick="showResults()">
                         Show results
                     </button>
+
+                    <button type="button" class="button secondary-button" onclick="showBacktest()">
+                        Backtest
+                    </button>
                 </div>
             </form>
         </section>
@@ -60,6 +64,16 @@
             }
 
             window.location.href = `/results?ticker=${ticker}`;
+        }
+        function showBacktest() {
+            const ticker = document.getElementById("ticker").value;
+
+            if (!ticker) {
+                alert("Please select a ticker before showing backtest.");
+                return;
+            }
+
+            window.location.href = `/backtest?ticker=${ticker}`;
         }
     </script>
 </body>
