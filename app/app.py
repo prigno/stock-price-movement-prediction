@@ -14,7 +14,8 @@ from src.data.data_processor import process_and_save_ticker
 from src.models.ridge_regression import train_and_evaluate_model
 
 from src.models.ridge_prediction import predict_next_7_days
-from src.visualization.plots import all_plots
+from src.backtest.backtest import run_backtest
+from src.visualization.plots import all_plots, all_backtest_plots
 
 
 app = Flask(__name__)
@@ -93,6 +94,28 @@ def results():
         return redirect(url_for("index", ticker=ticker))
 
     return render_template("results.html", ticker=ticker, image_paths=image_paths)
+
+
+@app.route("/backtest", methods=["GET"])
+def backtest():
+    """
+    Show the backtesting page for the selected ticker.
+    """
+    ticker = request.args.get("ticker")
+
+    if ticker not in TICKERS:
+        flash("Please select a valid ticker before showing backtest.")
+        return redirect(url_for("index"))
+
+    try:
+        metrics = run_backtest(ticker)
+        image_paths = all_backtest_plots(ticker)
+
+    except FileNotFoundError as error:
+        flash(str(error))
+        return redirect(url_for("index", ticker=ticker))
+
+    return render_template("backtest.html", ticker=ticker, metrics=metrics.to_dict(orient="records"), image_paths=image_paths)
 
 
 if __name__ == "__main__":
