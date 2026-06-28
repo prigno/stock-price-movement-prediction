@@ -57,35 +57,39 @@ def _build_feature_row(data: pd.DataFrame) -> dict:
     Build one feature row using the last available stock data.
 
     Args:
-        data (pd.DataFrame): raw stock data.
+        data (pd.DataFrame): raw data.
 
     Returns:
         dict: feature row used by the model.
     """
     data = data.copy()
 
+    # make sure data is ordered by date
     data["Date"] = pd.to_datetime(data["Date"])
     data = data.sort_values("Date")
 
+    # create column with the avg price for each day
     data["avg_current"] = (data["High"] + data["Low"]) / 2
 
     # min number of values needed to predict avg prices for next 7 days
     min_required_values = max(PREVIOUS_DAYS) + 1
-
     # filter dataset by considering only needed rows
     data = data.tail(min_required_values)
     avg_values = data["avg_current"].tolist()
 
     features = {}
 
+    # avg price of current day is the last value of the list
     features["avg_current"] = avg_values[-1]
 
+    # create columns avg_prev_1, avg_prev_2, ... for each previous day that is considered by the model
     for prev in PREVIOUS_DAYS:
         features[f"avg_prev_{prev}"] = avg_values[-1 - prev]
 
     # previous avg values (current day excluded)
     previous_values = avg_values[:-1]
 
+    # calculate statistics for previous 7 days
     for window_size in WINDOW_SIZES:
         window_values = previous_values[-window_size:]
 
@@ -158,5 +162,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     predictions = predict_next_7_days(ticker)
-    print(predictions)
 
