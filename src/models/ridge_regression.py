@@ -19,7 +19,7 @@ def _load_processed_data(ticker: str) -> pd.DataFrame:
     Load processed data of a ticker.
 
     Args:
-        ticker (str): stock ticker symbol.
+        ticker (str): ticker symbol.
 
     Returns:
         pd.DataFrame: processed ticker data.
@@ -54,7 +54,7 @@ def _save_report(ticker: str, metrics: pd.DataFrame) -> None:
     Save evaluation metrics.
 
     Args:
-        ticker (str): stock ticker symbol.
+        ticker (str): ticker symbol.
         metrics (pd.DataFrame): evaluation metrics.
     """
     output_dir = REPORTS_DIR
@@ -83,10 +83,10 @@ def _save_test_predictions(ticker: str, test_predictions: pd.DataFrame) -> None:
 
 def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     """
-    Train and evaluate the Ridge Regression model for a ticker.
+    Train and evaluate the model for a ticker.
 
     Args:
-        ticker (str): stock ticker symbol.
+        ticker (str): ticker symbol.
 
     Returns:
         pd.DataFrame: evaluation metrics.
@@ -108,10 +108,11 @@ def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     y_pred = model.predict(X_test)
     y_pred = pd.DataFrame(y_pred, columns=TARGET_COLUMNS, index=y_test.index)
 
+    # multioutput="raw_values" -> return a different value for each target column, instead of calculating the average of them
     mae = mean_absolute_error(y_test, y_pred, multioutput="raw_values")
-    mse = mean_squared_error(y_test, y_pred, multioutput="raw_values")
+    mse = mean_squared_error(y_test, y_pred, multioutput="raw_values")  # penalize significant errors
     rmse = mse ** 0.5
-    r2 = r2_score(y_test, y_pred, multioutput="raw_values")
+    r2 = r2_score(y_test, y_pred, multioutput="raw_values") # variability of data
 
     metrics = pd.DataFrame({"target": TARGET_COLUMNS, "mae": mae, "rmse": rmse, "r2": r2})
 
@@ -146,14 +147,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     ticker = sys.argv[1].upper()
-    if ticker not in TICKERS and ticker != "ALL_TICKERS":
+    if ticker not in TICKERS:
         print(f"Invalid ticker: {ticker}")
         print(f"Available tickers: {TICKERS}")
         sys.exit(1)
 
-    if ticker != "ALL_TICKERS":
-        train_and_evaluate_model(ticker)
-    else:
-        for t in TICKERS:
-            train_and_evaluate_model(t)
+    train_and_evaluate_model(ticker)
 
