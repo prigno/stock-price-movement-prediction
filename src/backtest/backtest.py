@@ -36,7 +36,7 @@ def _load_test_predictions(ticker: str) -> pd.DataFrame:
 
 def _add_trading_signals(data: pd.DataFrame, threshold: float) -> pd.DataFrame:
     """
-    Add trading signals using predicted prices.
+    Add trading signals to data.
 
     Args:
         data (pd.DataFrame): test predictions.
@@ -69,7 +69,7 @@ def _calculate_returns(data: pd.DataFrame, initial_capital: float, transaction_c
     """
     data = data.copy()
 
-    # Marker Return = (tomorrow's actual avg price - today's actual avg price) - today's actual avg price
+    # Marker Return = (tomorrow's actual avg price - today's actual avg price) / today's actual avg price
     data["Market_Return"] = (data["Actual_Average_Price_1"] - data["Current_Average_Price"]) / data["Current_Average_Price"]
 
     # calculate the absolute differenze between signal in row x and signal in row x - 1
@@ -185,9 +185,6 @@ def run_backtest(ticker: str, threshold: float = THRESHOLD, initial_capital: flo
     metrics = _calculate_metrics(data, initial_capital)
 
     _save_backtest_results(ticker, data, metrics)
-
-    print(f"Backtesting results for {ticker}")
-    print(metrics)
 
     return metrics
 
