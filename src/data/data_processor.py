@@ -23,30 +23,30 @@ def _process_data(data: pd.DataFrame) -> pd.DataFrame:
     data["Date"] = pd.to_datetime(data["Date"])
     data = data.sort_values("Date") # make sure dates are ordered
 
-    data["avg_current"] = (data["High"] + data["Low"]) / 2 # create column with avg price of the current day
+    data["avg_current"] = (data["High"] + data["Low"]) / 2 # create column with avg price of each day
 
     for prev in PREVIOUS_DAYS:
-        # create columns witch the avg prices of the previous 30 days, one for each column
+        # create columns witch the avg prices of the previous 7 days, one for each column
         data[f"avg_prev_{prev}"] = data["avg_current"].shift(prev)
 
-    previous_data = data["avg_current"].shift(1) # Series containing the previous 30 avg prices (today excluded)
+    previous_data = data["avg_current"].shift(1) # Series containing the previous 7 avg prices (current day excluded)
     for window_size in WINDOW_SIZES:
-        # sliding window of the previouse 7, 14, 30 or 60 days
+        # sliding window of the previouse 7 days
         rolling_values = previous_data.rolling(window=window_size) 
 
-        # calculate statistics of previous 7, 14, 30 or 60 days for each row
+        # calculate statistics of previous 7 days for each row
         data[f"stat_min_{window_size}"] = rolling_values.min()
         data[f"stat_max_{window_size}"] = rolling_values.max()
         data[f"stat_mean_{window_size}"] = rolling_values.mean()
         data[f"stat_std_{window_size}"] = rolling_values.std()
 
     for day in TARGET_DAYS:
-        # the model must predict for each row the avr price for the next 7 days
+        # the model try to predict for each row the avg price for the next 7 days
         data[f"Target_Average_Price_{day}"] = data["avg_current"].shift(-day)
 
     data = data.dropna()
-    data = data.reset_index(drop=True) # adjust indexes because some of the first rows
-                                       # and some of the last rows have been removed from dropna()
+    data = data.reset_index(drop=True)
+
     # columns of the processed dataset
     columns = ["Date"] + FEATURE_COLUMNS + TARGET_COLUMNS
     data = data[columns]
@@ -59,7 +59,7 @@ def process_and_save_ticker(ticker: str) -> None:
     Process and save data of a ticker.
 
     Args:
-        ticker (str): stock ticker symbol.
+        ticker (str): ticker symbol.
     """
     
     raw_data_path = RAW_DATA_DIR / f"{ticker}.csv"
@@ -82,14 +82,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     ticker = sys.argv[1].upper()
-    if ticker not in TICKERS and ticker != "ALL_TICKERS":
+    if ticker not in TICKERS:
         print(f"Invalid ticker: {ticker}")
         print(f"Available tickers: {TICKERS}")
         sys.exit(1)
 
-    if ticker != "ALL_TICKERS":
-        process_and_save_ticker(ticker)
-    else:
-        for t in TICKERS:
-            process_and_save_ticker(t)
+    process_and_save_ticker(ticker)
 
