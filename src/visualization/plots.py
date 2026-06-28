@@ -75,7 +75,6 @@ def error_plot(ticker: str, day: int) -> str:
     image_path = STATIC_IMAGES_DIR / image_name
 
     plt.figure(figsize=(1200, 600, "px"))
-    #plt.plot(data["Date"], data[f"Absolute_Error_{day}"])
     sns.histplot(data=data, x=f"Absolute_Error_{day}", bins=30, kde=True)
     mean_error = data[f"Absolute_Error_{day}"].mean()
     plt.axvline(mean_error, linestyle="--", label=f"Mean error: {mean_error:.2f}")
