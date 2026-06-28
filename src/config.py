@@ -14,10 +14,7 @@ END_DATE = "2026-06-01"
 # previous days used as features
 PREVIOUS_DAYS = list(range(1, 8))
 
-# number of days to predict
-PREDICTION_DAYS = 7
-
-# number of previous days used to compute statistics
+# previous days used to compute statistics
 WINDOW_SIZES = [7]
 
 # statistics computed
@@ -30,8 +27,9 @@ FEATURE_COLUMNS = (
     [f"stat_{statistic}_{window_size}" for window_size in WINDOW_SIZES for statistic in STATISTICS]
 )
 
-# days to predict
+# number of days to predict
 TARGET_DAYS = list(range(1, 8))
+PREDICTION_DAYS = 7
 
 # target columns to predict
 TARGET_COLUMNS = [f"Target_Average_Price_{day}" for day in TARGET_DAYS]
