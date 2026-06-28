@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Stock Price Movement Prediction</title>
-    <!-- Jinja2 sintax, needed to calculate dynamic values-->
+    <!-- Jinja2 sintax, used to calculate dynamic values-->
     <!-- Calculate the path of the css file -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> 
 </head>
@@ -11,7 +11,7 @@
     <main class="page-container">
         <section class="card">
             <h1>Stock Price Movement Prediction</h1>
-            <p class="subtitle">Select a stock ticker, train the model and show the prediction results.</p>
+            <p class="subtitle">Select a stock ticker, train the model and show the prediction results and the backtest strategy.</p>
 
             <!-- Messages are returned if the app.py script uses the function flash("...") -->
             {% with messages = get_flashed_messages() %}
