@@ -17,21 +17,15 @@ from src.models.ridge_prediction import predict_next_7_days
 from src.backtest.backtest import run_backtest
 from src.visualization.plots import all_plots, all_backtest_plots
 
+from src.config import TICKERS, START_DATE
 
+# create a Flask app instance
 app = Flask(__name__)
-# !-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!#
+
+# It is used to cryptographically sign the session's cookie, used by flash
 app.secret_key = "stock-price-secret-key"
-# !-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!!-!-!#
 
-
-# available tickers
-TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM", "JNJ", "XOM"]
-
-# first date of the period considered
-START_DATE = "2000-01-01"
-
-
-# link the URL / to the function inedx()
+# link the URL / to the function index()
 @app.route("/", methods=["GET"])
 def index():
     """
