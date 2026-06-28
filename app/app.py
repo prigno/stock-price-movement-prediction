@@ -84,7 +84,7 @@ def results():
         image_paths = all_plots(ticker)
 
     except FileNotFoundError as error:
-        flash(str(error))
+        flash("Train the model first.")
         return redirect(url_for("index", ticker=ticker))
 
     return render_template("results.html", ticker=ticker, image_paths=image_paths)
@@ -106,7 +106,7 @@ def backtest():
         image_paths = all_backtest_plots(ticker)
 
     except FileNotFoundError as error:
-        flash(str(error))
+        flash("Train the model first.")
         return redirect(url_for("index", ticker=ticker))
 
     return render_template("backtest.html", ticker=ticker, metrics=metrics.to_dict(orient="records"), image_paths=image_paths)
