@@ -30,7 +30,7 @@ def _load_data(ticker, start_date=START_DATE, end_date=END_DATE):
     data.columns.name = None # Remove the name of the group of columns (price)
 
     data = data.dropna()
-    data = data.reset_index()
+    data = data.reset_index()   # the index Date becomes a new column of the dataframe
 
     return data
 
