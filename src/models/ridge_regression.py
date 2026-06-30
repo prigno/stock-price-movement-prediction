@@ -108,9 +108,6 @@ def _find_best_alpha(X_train_validation: pd.DataFrame, y_train_validation: pd.Da
         y_validation_pred = model.predict(X_validation)
 
         mae = mean_absolute_error(y_validation, y_validation_pred, multioutput="raw_values").mean()
-
-        print(f"Alpha: {alpha} - Validation MAE: {mae:.4f}")
-
         if best_mae is None or mae < best_mae:
             best_mae = mae
             best_alpha = alpha
