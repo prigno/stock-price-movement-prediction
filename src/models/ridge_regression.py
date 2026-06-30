@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(PROJECT_ROOT))
-from src.config import TICKERS, FEATURE_COLUMNS, TARGET_COLUMNS, TEST_SIZE, ALPHA, PROCESSED_DATA_DIR, MODELS_DIR, REPORTS_DIR, TARGET_DAYS
+from src.config import TICKERS, FEATURE_COLUMNS, TARGET_COLUMNS, TEST_SIZE, PROCESSED_DATA_DIR, MODELS_DIR, REPORTS_DIR, TARGET_DAYS, VALIDATION_SIZE, ALPHA_VALUES
 
 
 def _load_processed_data(ticker: str) -> pd.DataFrame:
@@ -81,6 +81,45 @@ def _save_test_predictions(ticker: str, test_predictions: pd.DataFrame) -> None:
     test_predictions.to_csv(report_path, index=False)
 
 
+def _find_best_alpha(X_train_validation: pd.DataFrame, y_train_validation: pd.DataFrame) -> float:
+    """
+    Find the best parameter alpha using a validation set.
+
+    Args:
+        X_train_validation (pd.DataFrame): features used for training and validation.
+        y_train_validation (pd.DataFrame): targets used for training and validation.
+
+    Returns:
+        float: best alpha value.
+    """
+    X_train, X_validation, y_train, y_validation = train_test_split(X_train_validation, y_train_validation, test_size=VALIDATION_SIZE, shuffle=False)
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_validation = scaler.transform(X_validation)
+
+    best_alpha = 0.1
+    best_mae = None
+
+    for alpha in ALPHA_VALUES:
+        model = Ridge(alpha=alpha)
+        model.fit(X_train, y_train)
+
+        y_validation_pred = model.predict(X_validation)
+
+        mae = mean_absolute_error(y_validation, y_validation_pred, multioutput="raw_values").mean()
+
+        print(f"Alpha: {alpha} - Validation MAE: {mae:.4f}")
+
+        if best_mae is None or mae < best_mae:
+            best_mae = mae
+            best_alpha = alpha
+
+    print(f"Best alpha: {best_alpha}")
+
+    return best_alpha
+
+
 def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     """
     Train and evaluate the model for a ticker.
@@ -96,14 +135,16 @@ def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     X = data[FEATURE_COLUMNS]
     y = data[TARGET_COLUMNS]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, shuffle=False)
+    X_train_validation, X_test, y_train_validation, y_test = train_test_split(X,y,test_size=TEST_SIZE,shuffle=False)
+
+    best_alpha = _find_best_alpha(X_train_validation, y_train_validation)
 
     scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
+    X_train_validation = scaler.fit_transform(X_train_validation)
     X_test = scaler.transform(X_test)
 
-    model = Ridge(alpha=ALPHA)
-    model.fit(X_train, y_train)
+    model = Ridge(alpha=best_alpha)
+    model.fit(X_train_validation, y_train_validation)
 
     y_pred = model.predict(X_test)
     y_pred = pd.DataFrame(y_pred, columns=TARGET_COLUMNS, index=y_test.index)
