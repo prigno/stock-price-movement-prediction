@@ -80,7 +80,7 @@ def _calculate_returns(data: pd.DataFrame, initial_capital: float, transaction_c
     data["Trade"] = data["Trade"].fillna(data["Signal"])
 
     # signal = 1 -> capital invested -> take the return
-    # signal = 1 -> capital non invested -> don't take the return
+    # signal = 0 -> capital non invested -> don't take the return
     data["Strategy_Return"] = data["Signal"] * data["Market_Return"]
     data["Strategy_Return"] = data["Strategy_Return"] - data["Trade"] * transaction_cost
 
