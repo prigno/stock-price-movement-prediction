@@ -5,7 +5,7 @@ import joblib
 import pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.preprocessing import StandardScaler
 
 
@@ -150,9 +150,8 @@ def train_and_evaluate_model(ticker: str) -> pd.DataFrame:
     mae = mean_absolute_error(y_test, y_pred, multioutput="raw_values")
     mse = mean_squared_error(y_test, y_pred, multioutput="raw_values")  # penalize significant errors
     rmse = mse ** 0.5
-    r2 = r2_score(y_test, y_pred, multioutput="raw_values") # variability of data
 
-    metrics = pd.DataFrame({"target": TARGET_COLUMNS, "mae": mae, "rmse": rmse, "r2": r2})
+    metrics = pd.DataFrame({"target": TARGET_COLUMNS, "mae": mae, "rmse": rmse})
 
     # DataFrame used for the evaluation model graphic
     predictions = pd.DataFrame()
