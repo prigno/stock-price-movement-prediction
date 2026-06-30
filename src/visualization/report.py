@@ -10,28 +10,43 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(PROJECT_ROOT))
 from src.config import REPORTS_DIR, TICKERS
+from src.data.data_loader import load_and_save_ticker
+from src.data.data_processor import process_and_save_ticker
+from src.models.ridge_regression import train_and_evaluate_model
 
-METRIC_COLUMNS = ["mae", "rmse"]
 
-
-def _load_metrics(ticker: str) -> pd.DataFrame:
+def _load_metrics() -> pd.DataFrame:
     """
-    Load Ridge Regression metrics of a ticker.
-
-    Args:
-        ticker (str): ticker symbol.
+    Load Ridge Regression metrics and calculate the mean metrics over all tickers.
 
     Returns:
-        pd.DataFrame: model evaluation metrics.
+        pd.DataFrame: mean model evaluation metrics over all tickers.
     """
-    file_path = REPORTS_DIR / f"{ticker}_ridge_regression_metrics.csv"
+    dataframes = []
 
-    if not file_path.exists():
-        raise FileNotFoundError(f"Metrics file not found: {file_path}")
+    for ticker in TICKERS:
+        load_and_save_ticker(ticker)
+        process_and_save_ticker(ticker)
+        train_and_evaluate_model(ticker)
 
-    data = pd.read_csv(file_path)
+        file_path = REPORTS_DIR / f"{ticker}_ridge_regression_metrics.csv"
 
-    return data
+        if not file_path.exists():
+            raise FileNotFoundError(f"Metrics file not found: {file_path}")
+
+        df = pd.read_csv(file_path)
+        
+        dataframes.append(df)
+
+    data = pd.concat(dataframes, ignore_index=True)
+
+    mean_metrics = data.groupby("target", as_index=False)[["mae", "rmse", "r2"]].mean()
+    print(mean_metrics)
+
+    output_path = REPORTS_DIR / "ridge_regression_mean_metrics.csv"
+    mean_metrics.to_csv(output_path, index=False)
+    
+    return mean_metrics
 
 
 def _add_target_day(data: pd.DataFrame) -> pd.DataFrame:
@@ -52,21 +67,18 @@ def _add_target_day(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def metrics_plot(ticker: str) -> Path:
+def metrics_plot() -> Path:
     """
     Create Ridge Regression MAE and RMSE plot.
-
-    Args:
-        ticker (str): ticker symbol.
 
     Returns:
         Path: path of the generated image.
     """
-    data = _load_metrics(ticker)
+    data = _load_metrics()
     data = _add_target_day(data)
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    image_path = REPORTS_DIR / f"{ticker}_ridge_regression_metrics.svg"
+    image_path = REPORTS_DIR / f"ridge_regression_metrics.svg"
 
     x_values = range(len(data))
     x_labels = [f"Day {day}" for day in data["target_day"]]
@@ -76,7 +88,7 @@ def metrics_plot(ticker: str) -> Path:
 
     plt.bar([x - bar_width / 2 for x in x_values],data["mae"], width=bar_width, label="MAE")
     plt.bar([x + bar_width / 2 for x in x_values], data["rmse"], width=bar_width, label="RMSE")
-    plt.title(f"{ticker} - Mae and RMSE")
+    plt.title(f"Mae and RMSE")
     plt.xlabel("Target day")
     plt.ylabel("Error ($)")
     plt.xticks(ticks=list(x_values), labels=x_labels)
@@ -86,26 +98,14 @@ def metrics_plot(ticker: str) -> Path:
     plt.savefig(image_path)
     plt.close()
 
-    print(f"MAE and RMSE plot for {ticker} saved to {image_path}")
+    print(f"MAE and RMSE plot for saved to {image_path}")
 
     return image_path
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: <ticker> required as argument")
-        print(f"Available tickers: {TICKERS}")
-        sys.exit(1)
-
-    ticker = sys.argv[1].upper()
-
-    if ticker not in TICKERS:
-        print(f"Invalid ticker: {ticker}")
-        print(f"Available tickers: {TICKERS}")
-        sys.exit(1)
-
     try:
-        metrics_plot(ticker)
+        metrics_plot()
     except (FileNotFoundError, ValueError) as error:
         print(error)
         sys.exit(1)
