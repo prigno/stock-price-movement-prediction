@@ -9,8 +9,8 @@ from src.config import REPORTS_DIR, TICKERS
 
 
 INITIAL_CAPITAL = 10000
-THRESHOLD = 0.001   # buy only if tomorrow's avg price is at least 0.1% higher that today's avg price
-TRANSACTION_COST = 0.001    # everytime a bought or a sold is done, a transaction of 0.1% is paid
+THRESHOLD = 0.001   # buy only if tomorrow's avg price is at least 0.1% higher than today's avg price
+TRANSACTION_COST = 0.001    # everytime a buy or a sell is done, a transaction of 0.1% is paid
 
 
 def _load_test_predictions(ticker: str) -> pd.DataFrame:
@@ -69,14 +69,14 @@ def _calculate_returns(data: pd.DataFrame, initial_capital: float, transaction_c
     """
     data = data.copy()
 
-    # Marker Return = (tomorrow's actual avg price - today's actual avg price) / today's actual avg price
+    # Market Return = (tomorrow's actual avg price - today's actual avg price) / today's actual avg price
     data["Actual_Return"] = (data["Actual_Average_Price_1"] - data["Current_Average_Price"]) / data["Current_Average_Price"]
 
-    # calculate the absolute differenze between signal in row x and signal in row x - 1
+    # calculate the absolute difference between signal in row x and signal in row x - 1
     # if trade = 0 -> stay
     # if trade = 1 -> buy or sell 
     trade = data["Signal"].diff().abs()
-    # first raw is NaN (because don't have a previous raw) -> is filled with value of signal (1=buy, 0=don't buy)
+    # first row is NaN (because don't have a previous row) -> is filled with value of signal (1=buy, 0=don't buy)
     trade = trade.fillna(data["Signal"])
 
     # signal = 1 -> capital invested -> take the return
@@ -108,7 +108,7 @@ def _calculate_metrics(data: pd.DataFrame, initial_capital: float) -> pd.DataFra
     strategy_return = (final_strategy_capital - initial_capital) / initial_capital
     buy_hold_return = (final_buy_hold_capital - initial_capital) / initial_capital
 
-    # count the number of boughts and solds
+    # count the number of buys and sells
     trade = data["Signal"].diff().abs()
     trade = trade.fillna(data["Signal"])
     number_of_trades = trade.sum()
