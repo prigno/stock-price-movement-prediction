@@ -10,7 +10,7 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(PROJECT_ROOT))
-from src.config import STATIC_IMAGES_DIR, REPORTS_DIR, PREDICTIONS_DIR, TARGET_DAYS
+from src.config import STATIC_IMAGES_DIR, REPORTS_DIR, PREDICTIONS_DIR, TARGET_DAYS, BACKTEST_DIR
 
 
 def model_evaluation_plot(ticker: str, day: int) -> str:
@@ -158,7 +158,7 @@ def backtest_capital_comparison_plot(ticker: str) -> str:
     Returns:
         str: relative path of the generated image.
     """
-    results_path = REPORTS_DIR / f"{ticker}_backtest_results.csv"
+    results_path = BACKTEST_DIR / f"{ticker}_backtest_results.csv"
 
     if not results_path.exists():
         raise FileNotFoundError(f"Backtest results file not found: {results_path}")
@@ -198,3 +198,4 @@ def all_backtest_plots(ticker: str) -> dict:
     image_paths = {"capital_comparison": backtest_capital_comparison_plot(ticker)}
 
     return image_paths
+
