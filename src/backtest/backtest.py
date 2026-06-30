@@ -5,7 +5,7 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.append(str(PROJECT_ROOT))
-from src.config import REPORTS_DIR, TICKERS
+from src.config import REPORTS_DIR, BACKTEST_DIR, TICKERS
 
 
 INITIAL_CAPITAL = 10000
@@ -149,10 +149,10 @@ def _save_backtest_results(ticker: str, data: pd.DataFrame, metrics: pd.DataFram
         data (pd.DataFrame): backtesting results.
         metrics (pd.DataFrame): backtesting metrics.
     """
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    BACKTEST_DIR.mkdir(parents=True, exist_ok=True)
 
-    results_path = REPORTS_DIR / f"{ticker}_backtest_results.csv"
-    metrics_path = REPORTS_DIR / f"{ticker}_backtest_metrics.csv"
+    results_path = BACKTEST_DIR / f"{ticker}_backtest_results.csv"
+    metrics_path = BACKTEST_DIR / f"{ticker}_backtest_metrics.csv"
 
     data.to_csv(results_path, index=False)
     metrics.to_csv(metrics_path, index=False)

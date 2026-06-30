@@ -51,4 +51,6 @@ MODELS_DIR = ROOT_DIR / "src" / "models"
 
 REPORTS_DIR = ROOT_DIR / "src" / "reports"
 
+BACKTEST_DIR = ROOT_DIR / "src" / "backtest"
+
 STATIC_IMAGES_DIR = ROOT_DIR / "app" / "static" / "images"
