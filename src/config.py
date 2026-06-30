@@ -12,10 +12,10 @@ START_DATE = "2000-01-01"
 END_DATE = "2026-06-01"
 
 # previous days used as features
-PREVIOUS_DAYS = list(range(1, 8))
+PREVIOUS_DAYS = list(range(1, 2))
 
 # previous days used to compute statistics
-WINDOW_SIZES = [7]
+WINDOW_SIZES = []
 
 # statistics computed
 STATISTICS = ["min", "max", "mean", "std"]
@@ -39,7 +39,7 @@ TEST_SIZE = 0.2
 VALIDATION_SIZE = 0.125
 
 # ridge regularization parameter
-ALPHA_VALUES = [i / 100 for i in range(1, 101)]
+ALPHA_VALUES = [i / 100 for i in range(1, 201)]
 
 RAW_DATA_DIR = ROOT_DIR / "data" / "raw"
 
