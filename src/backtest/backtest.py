@@ -73,16 +73,16 @@ def _calculate_returns(data: pd.DataFrame, initial_capital: float, transaction_c
     data["Market_Return"] = (data["Actual_Average_Price_1"] - data["Current_Average_Price"]) / data["Current_Average_Price"]
 
     # calculate the absolute differenze between signal in row x and signal in row x - 1
-    # if Trade = 0 -> stay
-    # if Trade = 1 -> buy or sell 
-    data["Trade"] = data["Signal"].diff().abs()
+    # if trade = 0 -> stay
+    # if trade = 1 -> buy or sell 
+    trade = data["Signal"].diff().abs()
     # first raw is NaN (because don't have a previous raw) -> is filled with value of signal (1=buy, 0=don't buy)
-    data["Trade"] = data["Trade"].fillna(data["Signal"])
+    trade = trade.fillna(data["Signal"])
 
     # signal = 1 -> capital invested -> take the return
     # signal = 0 -> capital non invested -> don't take the return
     data["Strategy_Return"] = data["Signal"] * data["Market_Return"]
-    data["Strategy_Return"] = data["Strategy_Return"] - data["Trade"] * transaction_cost
+    data["Strategy_Return"] = data["Strategy_Return"] - trade * transaction_cost
 
     # final capital: initial capital * (1 + cumulative product of returns)
     data["Strategy_Capital"] = initial_capital * (1 + data["Strategy_Return"]).cumprod()
@@ -109,7 +109,9 @@ def _calculate_metrics(data: pd.DataFrame, initial_capital: float) -> pd.DataFra
     buy_hold_return = (final_buy_hold_capital - initial_capital) / initial_capital
 
     # count the number of boughts and solds
-    number_of_trades = data["Trade"].sum()
+    trade = data["Signal"].diff().abs()
+    trade = trade.fillna(data["Signal"])
+    number_of_trades = trade.sum()
 
     # count the number of days in which the capital was invested
     invested_days = len(data[data["Signal"] == 1])
