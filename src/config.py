@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import numpy as np
 
 # project root
 ROOT_DIR = Path(__file__).resolve().parents[1]
@@ -39,7 +39,7 @@ TEST_SIZE = 0.2
 VALIDATION_SIZE = 0.125
 
 # ridge regularization parameter
-ALPHA_VALUES = [i / 100 for i in range(1, 201)]
+ALPHA_VALUES = np.logspace(-4, 4, 100)
 
 RAW_DATA_DIR = ROOT_DIR / "data" / "raw"
 
