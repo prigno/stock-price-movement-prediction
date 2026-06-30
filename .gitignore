@@ -5,7 +5,7 @@ data/processed
 data/predictions 
 
 src/models/*.joblib
-src/reports
+src/reports/*.csv
 
 __pycache__/
 
