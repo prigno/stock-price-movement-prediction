@@ -40,7 +40,7 @@ def _load_metrics() -> pd.DataFrame:
 
     data = pd.concat(dataframes, ignore_index=True)
 
-    mean_metrics = data.groupby("target", as_index=False)[["mae", "rmse", "r2"]].mean()
+    mean_metrics = data.groupby("target", as_index=False)[["mae", "rmse"]].mean()
     print(mean_metrics)
 
     output_path = REPORTS_DIR / "ridge_regression_mean_metrics.csv"
