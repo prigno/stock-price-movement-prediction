@@ -70,7 +70,7 @@ def _calculate_returns(data: pd.DataFrame, initial_capital: float, transaction_c
     data = data.copy()
 
     # Marker Return = (tomorrow's actual avg price - today's actual avg price) / today's actual avg price
-    data["Market_Return"] = (data["Actual_Average_Price_1"] - data["Current_Average_Price"]) / data["Current_Average_Price"]
+    data["Actual_Return"] = (data["Actual_Average_Price_1"] - data["Current_Average_Price"]) / data["Current_Average_Price"]
 
     # calculate the absolute differenze between signal in row x and signal in row x - 1
     # if trade = 0 -> stay
@@ -81,12 +81,12 @@ def _calculate_returns(data: pd.DataFrame, initial_capital: float, transaction_c
 
     # signal = 1 -> capital invested -> take the return
     # signal = 0 -> capital non invested -> don't take the return
-    data["Strategy_Return"] = data["Signal"] * data["Market_Return"]
+    data["Strategy_Return"] = data["Signal"] * data["Actual_Return"]
     data["Strategy_Return"] = data["Strategy_Return"] - trade * transaction_cost
 
     # final capital: initial capital * (1 + cumulative product of returns)
     data["Strategy_Capital"] = initial_capital * (1 + data["Strategy_Return"]).cumprod()
-    data["Buy_Hold_Capital"] = initial_capital * (1 + data["Market_Return"]).cumprod()
+    data["Buy_Hold_Capital"] = initial_capital * (1 + data["Actual_Return"]).cumprod()
 
     return data
 
@@ -116,13 +116,6 @@ def _calculate_metrics(data: pd.DataFrame, initial_capital: float) -> pd.DataFra
     # count the number of days in which the capital was invested
     invested_days = len(data[data["Signal"] == 1])
 
-    # max capital reached for each day (cumulative max)
-    strategy_peak = data["Strategy_Capital"].cummax()
-    # calculate how much the capital has decreased realtive to the previous peak
-    drawdown = (data["Strategy_Capital"] - strategy_peak) / strategy_peak
-    # calculate the worst drawdown
-    max_drawdown = drawdown.min()
-
     metrics = pd.DataFrame({
         "metric": [
             "initial_capital",
@@ -131,8 +124,7 @@ def _calculate_metrics(data: pd.DataFrame, initial_capital: float) -> pd.DataFra
             "strategy_return",
             "buy_hold_return",
             "number_of_trades",
-            "invested_days",
-            "max_drawdown"
+            "invested_days"
         ],
         "value": [
             initial_capital,
@@ -141,8 +133,7 @@ def _calculate_metrics(data: pd.DataFrame, initial_capital: float) -> pd.DataFra
             strategy_return,
             buy_hold_return,
             number_of_trades,
-            invested_days,
-            max_drawdown
+            invested_days
         ]
     })
 
