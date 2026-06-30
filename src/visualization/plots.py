@@ -99,7 +99,7 @@ def prediction_plot(ticker: str) -> str:
     Returns:
         str: relative path of the generated image.
     """
-    predictions_path = PREDICTIONS_DIR / f"{ticker}_ridge_predictions.csv"
+    predictions_path = PREDICTIONS_DIR / f"{ticker}_predictions.csv"
 
     if not predictions_path.exists():
         raise FileNotFoundError(f"Prediction file not found: {predictions_path}")

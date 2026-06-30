@@ -142,7 +142,7 @@ def predict_next_7_days(ticker: str) -> pd.DataFrame:
 
     PREDICTIONS_DIR.mkdir(parents=True, exist_ok=True)
 
-    output_path = PREDICTIONS_DIR / f"{ticker}_ridge_predictions.csv"
+    output_path = PREDICTIONS_DIR / f"{ticker}_predictions.csv"
     predictions.to_csv(output_path, index=False)
 
     return predictions
