@@ -57,7 +57,7 @@ def error_plot(ticker: str, day: int) -> str:
     Create absolute error plot.
 
     Args:
-        ticker (str): stock ticker symbol.
+        ticker (str): ticker symbol.
         day (int): target day.
 
     Returns:
@@ -80,7 +80,7 @@ def error_plot(ticker: str, day: int) -> str:
     mean_error = data[f"Absolute_Error_{day}"].mean()
     plt.axvline(mean_error, linestyle="--", label=f"Mean error: {mean_error:.2f}")
     plt.title(f"{ticker} Absolute Error - Day {day}")
-    plt.xlabel("Absolute Error")
+    plt.xlabel("Absolute Error ($)")
     plt.ylabel("Frequency")
     plt.grid(True)
     plt.legend()
@@ -118,7 +118,7 @@ def prediction_plot(ticker: str) -> str:
     plt.xticks(ticks=data["Date"], labels=data["Date"].dt.strftime("%Y-%m-%d"), rotation=30)
     plt.title(f"{ticker} Next 7 Business Days Predictions")
     plt.xlabel("Date")
-    plt.ylabel("Predicted Average Price")
+    plt.ylabel("Predicted Average Price ($)")
     plt.grid(True)
     plt.tight_layout()
     plt.savefig(image_path)
