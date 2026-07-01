@@ -34,7 +34,7 @@ def index():
     # read the ticker parameter from the URL. "" is the default if it's not specified
     selected_ticker = request.args.get("ticker", "")
 
-    # return app/templates/index.html
+    # return templates/index.html
     return render_template("index.html", tickers=TICKERS, selected_ticker=selected_ticker)
 
 # link the URL /train to the function train()
@@ -61,8 +61,8 @@ def train():
 
         flash(f"Training completed for {ticker}.")
 
-    except FileNotFoundError as error:
-        flash(str(error))
+    except FileNotFoundError:
+        flash("Error: try again later.")
 
     return redirect(url_for("index", ticker=ticker))
 
@@ -83,8 +83,8 @@ def results():
         predict_next_7_days(ticker)
         image_paths = all_plots(ticker)
 
-    except FileNotFoundError as error:
-        flash("Train the model first.")
+    except FileNotFoundError:
+        flash("Error: train the model first.")
         return redirect(url_for("index", ticker=ticker))
 
     return render_template("results.html", ticker=ticker, image_paths=image_paths)
