@@ -54,3 +54,9 @@ REPORTS_DIR = ROOT_DIR / "src" / "reports"
 BACKTEST_DIR = ROOT_DIR / "src" / "backtest"
 
 STATIC_IMAGES_DIR = ROOT_DIR / "app" / "static" / "images"
+
+INITIAL_CAPITAL = 10000
+
+THRESHOLD = 0.001   # buy only if tomorrow's avg price is at least 0.1% higher than today's avg price
+
+TRANSACTION_COST = 0.001    # everytime a buy or a sell is done, a transaction of 0.1% is paid
