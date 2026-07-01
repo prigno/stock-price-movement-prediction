@@ -165,7 +165,8 @@ def backtest_capital_comparison_plot(ticker: str) -> str:
     if not results_path.exists():
         raise FileNotFoundError(f"Backtest results file not found: {results_path}")
 
-    data = pd.read_csv(results_path)
+    columns = ["Strategy_Capital", "Buy_Hold_Capital"]
+    data = pd.read_csv(results_path, usecols=columns)
     data["Date"] = pd.to_datetime(data["Date"])
 
     image_name = f"{ticker}_backtest_capital_comparison.svg"
@@ -177,7 +178,7 @@ def backtest_capital_comparison_plot(ticker: str) -> str:
     plt.plot(data["Date"], data["Buy_Hold_Capital"], label="Buy and hold capital")
     plt.title(f"{ticker} Strategy vs Buy and Hold")
     plt.xlabel("Date")
-    plt.ylabel("Capital")
+    plt.ylabel("Capital ($)")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
