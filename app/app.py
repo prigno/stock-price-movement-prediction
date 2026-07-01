@@ -105,8 +105,8 @@ def backtest():
         metrics = run_backtest(ticker)
         image_paths = all_backtest_plots(ticker)
 
-    except FileNotFoundError as error:
-        flash("Train the model first.")
+    except FileNotFoundError:
+        flash("Error: train the model first.")
         return redirect(url_for("index", ticker=ticker))
 
     return render_template("backtest.html", ticker=ticker, metrics=metrics.to_dict(orient="records"), image_paths=image_paths)
