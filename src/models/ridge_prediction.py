@@ -124,18 +124,18 @@ def predict_next_7_days(ticker: str) -> pd.DataFrame:
     # the return is [[...]]
     y_pred = model.predict(X_scaled)[0]
 
+    # find the last date of data
     data["Date"] = pd.to_datetime(data["Date"])
     data = data.sort_values("Date")
     last_date = data["Date"].iloc[-1]
 
-    # find business day
+    # use the last_date to find the next 7 business day
     prediction_dates = pd.bdate_range(
         start=last_date + pd.offsets.BDay(1),
         periods=PREDICTION_DAYS
     )
 
     predictions = pd.DataFrame({
-        "Day": list(range(1, PREDICTION_DAYS + 1)),
         "Date": prediction_dates,
         "Predicted_Average_Price": y_pred
     })
