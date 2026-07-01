@@ -165,7 +165,7 @@ def backtest_capital_comparison_plot(ticker: str) -> str:
     if not results_path.exists():
         raise FileNotFoundError(f"Backtest results file not found: {results_path}")
 
-    columns = ["Strategy_Capital", "Buy_Hold_Capital"]
+    columns = ["Date", "Strategy_Capital", "Buy_Hold_Capital"]
     data = pd.read_csv(results_path, usecols=columns)
     data["Date"] = pd.to_datetime(data["Date"])
 
