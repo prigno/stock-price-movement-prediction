@@ -16,3 +16,7 @@ app/static/images
 stats.txt
 
 src/backtest/*.csv
+
+/src/models/decision_tree.py
+/src/models/polynomial_regression.py
+/src/models/linear_regression.py
