@@ -17,3 +17,5 @@ stats.txt
 app/static/images
 
 docs/
+
+src/backtest/*.csv
