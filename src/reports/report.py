@@ -49,24 +49,6 @@ def _load_metrics() -> pd.DataFrame:
     return mean_metrics
 
 
-def _add_target_day(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Add the column 'day'.
-
-    Args:
-        data (pd.DataFrame): metrics data.
-
-    Returns:
-        pd.DataFrame: metrics data with target day.
-    """
-    data = data.copy()
-
-    # extract the final number from a column like "Target_Average_Price_1"
-    data["target_day"] = data["target"].str.extract(r"(\d+)$").astype(int)
-
-    return data
-
-
 def metrics_plot() -> Path:
     """
     Create Ridge Regression MAE and RMSE plot.
@@ -75,7 +57,7 @@ def metrics_plot() -> Path:
         Path: path of the generated image.
     """
     data = _load_metrics()
-    data = _add_target_day(data)
+    data["target_day"] = data["target"].str.extract(r"(\d+)$").astype(int)
 
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     image_path = REPORTS_DIR / f"ridge_regression_metrics.svg"
