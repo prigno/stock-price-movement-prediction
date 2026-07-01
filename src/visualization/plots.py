@@ -29,7 +29,8 @@ def model_evaluation_plot(ticker: str, day: int) -> str:
     if not predictions_path.exists():
         raise FileNotFoundError(f"Test predictions file not found: {predictions_path}")
 
-    data = pd.read_csv(predictions_path)
+    columns = ["Date", f"Actual_Average_Price_{day}", f"Predicted_Average_Price_{day}"]
+    data = pd.read_csv(predictions_path, usecols=columns)
     data["Date"] = pd.to_datetime(data["Date"])
 
     image_name = f"{ticker}_model_evaluation_{day}.svg"
@@ -41,7 +42,7 @@ def model_evaluation_plot(ticker: str, day: int) -> str:
     plt.plot(data["Date"], data[f"Predicted_Average_Price_{day}"], label="Predicted values")
     plt.title(f"{ticker} Model Evaluation - Day {day}")
     plt.xlabel("Date")
-    plt.ylabel("Average Price")
+    plt.ylabel("Average Price ($)")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
@@ -67,21 +68,22 @@ def error_plot(ticker: str, day: int) -> str:
     if not predictions_path.exists():
         raise FileNotFoundError(f"Test predictions file not found: {predictions_path}")
 
-    data = pd.read_csv(predictions_path)
-    data["Date"] = pd.to_datetime(data["Date"])
+    columns = [f"Absolute_Error_{day}"]
+    data = pd.read_csv(predictions_path, usecols=columns)
 
     image_name = f"{ticker}_absolute_error_{day}.svg"
     STATIC_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     image_path = STATIC_IMAGES_DIR / image_name
 
     plt.figure(figsize=(1200, 600, "px"))
-    sns.histplot(data=data, x=f"Absolute_Error_{day}", bins=30, kde=True)
+    sns.histplot(data=data, x=f"Absolute_Error_{day}", bins=30) # divide errors in 30 intervals
     mean_error = data[f"Absolute_Error_{day}"].mean()
     plt.axvline(mean_error, linestyle="--", label=f"Mean error: {mean_error:.2f}")
     plt.title(f"{ticker} Absolute Error - Day {day}")
     plt.xlabel("Absolute Error")
     plt.ylabel("Frequency")
     plt.grid(True)
+    plt.legend()
     plt.tight_layout()
     plt.savefig(image_path)
     plt.close()
